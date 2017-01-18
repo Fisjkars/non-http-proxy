@@ -1,0 +1,11 @@
+Uuid: 910b932735384faf911f5e09f394513b
+ExtensionType: 1
+Name: Non-HTTP Proxy
+ScreenVersion: 2.5
+SerialVersion: 0
+MinPlatformVersion: 0
+ProOnly: False
+Author: Josh Summitt
+ShortDescription: This burp extension adds two new features to BurpSuite: a configurable DNS server, and a non-HTTP MiTM Intercepting proxy
+EntryPoint: NonHTTPProxy/target/NonHTTPProxy-0.0.1-SNAPSHOT.jar
+BuildCommand: cd NonHTTPProxy && mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B
