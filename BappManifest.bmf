@@ -7,5 +7,5 @@ MinPlatformVersion: 0
 ProOnly: False
 Author: Josh Summitt
 ShortDescription: This burp extension adds two new features to BurpSuite: a configurable DNS server, and a non-HTTP MiTM Intercepting proxy
-EntryPoint: NonHTTPProxy/target/NonHTTPProxy-0.0.1-SNAPSHOT.jar
+EntryPoint: NonHTTPProxy/target/NonHTTPProxy-0.0.1-SNAPSHOT-all.jar
 BuildCommand: cd NonHTTPProxy && mvn package -DskipTests=true -Dmaven.javadoc.skip=true -B
