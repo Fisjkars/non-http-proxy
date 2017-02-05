@@ -201,20 +201,20 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 	private Queue<LogEntry> queue = new LinkedList<LogEntry>();
 	private Timer timer;
 	private JEditorPane PythonConsole;
-	
+
 	public boolean useDefault= false;
 	public IMessageEditor repeater;
-	
-	
+
+
 	private Color NopeGreen =  new Color(0x2e,0x7d,0x32); //135, 211, 124);
 	private Color NopeRed = new Color(214, 69, 65);
-	private Color NopePurple = new Color(142, 68, 173); 
+	private Color NopePurple = new Color(142, 68, 173);
 	private Color NopeBlue = new Color(65, 131, 215);
 	private Color NopeOrange = new Color(249, 191, 59);
 	private Color NopePink = new Color(0xc2,0x18,0x5b);
 	private Color NopeGrey = new Color(0x26,0x32,0x38);
 	private Lister lister;
-	
+
 
 	//GenericMiTMServer mtm;
 
@@ -231,17 +231,17 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		IconFontSwing.register(Elusive.getIconFont());
 		IconFontSwing.register(FontAwesome.getIconFont());
 		IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
-		
+
 		//#####################################################################################
 		// Setup Saved Configs
 		AUTOSTART = Boolean.parseBoolean(this.getProperties("autoStart", "false"));
 		IFNUM = Integer.parseInt(this.getProperties("interface","0"));
-		
+
 		//#####################################################################################
-		// Create the 3 tabs 
+		// Create the 3 tabs
 		BurpTabs = new JTabbedPane();
 		Intercept = new JPanel();
-		JScrollPane History = new JScrollPane(); 
+		JScrollPane History = new JScrollPane();
 		JPanel Options = new JPanel();
 		this.setBorder(null);
 		GridBagLayout gbl_Options = new GridBagLayout();
@@ -268,7 +268,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_panel_2.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_panel_2.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		panel_2.setLayout(gbl_panel_2);
-																
+
 		//#####################################################################################
 	    // DNS Controls for  Options tab
 		JPanel panel = new JPanel();
@@ -321,7 +321,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_lblDnsIp.gridx = 3;
 		gbc_lblDnsIp.gridy = 0;
 		panel.add(lblDnsIp, gbc_lblDnsIp);
-				
+
 
 		dnsIpTxt = new JTextField();
 		dnsIpTxt.setToolTipText("Must restart the DNS server when the DNS IP is changed.");
@@ -344,7 +344,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		dnsIpTxt.setColumns(10);
 		dnsIpTxt.setText(local);
 		DNSIP = dnsIpTxt.getText();
-		
+
 		JLabel lblDnsport = new JLabel("DNS Listener Port:");
 		GridBagConstraints gbc_lblDnsport = new GridBagConstraints();
 		gbc_lblDnsport.fill = GridBagConstraints.HORIZONTAL;
@@ -352,14 +352,14 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_lblDnsport.gridx = 3;
 		gbc_lblDnsport.gridy = 1;
 		panel.add(lblDnsport, gbc_lblDnsport);
-		
+
 		final JCheckBox chckbxStartDnsOn = new JCheckBox("Start DNS on Start Up");
 		chckbxStartDnsOn.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
 				updateAutoStart(chckbxStartDnsOn.isSelected());
 			}
 		});
-		
+
 		txtDNSPort = new JTextField();
 		txtDNSPort.addKeyListener(new KeyAdapter() {
 			@Override
@@ -381,7 +381,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_txtDNSPort.gridy = 1;
 		panel.add(txtDNSPort, gbc_txtDNSPort);
 		txtDNSPort.setColumns(10);
-		
+
 		//#####################################################################################
 	    // Network Interfaces Information for  Options tab
 		IfTxtBox = new JTextField();
@@ -390,11 +390,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			public void keyReleased(KeyEvent evt) {
 				if(IfTxtBox.getText().matches("^[0-9]{1,3}$")){
 					updateInterface(IfTxtBox.getText());
-					updateInterfaceInformation();	
+					updateInterfaceInformation();
 				}
 			}
 		});
-				
+
 				JLabel lblInterface = new JLabel("Interface:");
 				GridBagConstraints gbc_lblInterface = new GridBagConstraints();
 				gbc_lblInterface.anchor = GridBagConstraints.WEST;
@@ -402,8 +402,8 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbc_lblInterface.gridx = 1;
 				gbc_lblInterface.gridy = 2;
 				panel.add(lblInterface, gbc_lblInterface);
-		
-		
+
+
 		IfTxtBox.setToolTipText("The interface number from the list below.");
 		IfTxtBox.setText(""+IFNUM);
 		GridBagConstraints gbc_IfTxtBox = new GridBagConstraints();
@@ -420,7 +420,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_chckbxStartDnsOn.gridx = 4;
 		gbc_chckbxStartDnsOn.gridy = 2;
 		panel.add(chckbxStartDnsOn, gbc_chckbxStartDnsOn);
-		
+
 		useDefaultIp = new JCheckBox("Use the above 'DNS Response IP' for all DNS responses excluding host entries below. ");
 		useDefaultIp.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
@@ -434,8 +434,8 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_useDefaultIp.gridx = 2;
 		gbc_useDefaultIp.gridy = 1;
 		panel_2.add(useDefaultIp, gbc_useDefaultIp);
-		
-				
+
+
 				lblCurrentIpAddress.setToolTipText("Double Click to add IP address to DNS Config");
 				lblCurrentIpAddress.addMouseListener(new MouseAdapter() {
 					@Override
@@ -448,8 +448,8 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 								ip=ip.trim();
 								dnsIpTxt.setText(ip);
 							}
-							
-							
+
+
 						}
 					}
 				});
@@ -460,11 +460,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbc_lblCurrentIpAddress.gridx = 1;
 				gbc_lblCurrentIpAddress.gridy = 2;
 				panel_2.add(lblCurrentIpAddress, gbc_lblCurrentIpAddress);
-				
-				
+
+
 						lblCurrentIpAddress.setForeground(Color.BLUE);
 						lblCurrentIpAddress.setText("Current Ip Address: " + local );
-		
+
 		JLabel lblNewLabel_1 = new JLabel("             Left unchecked the real IP address will be used instead.");
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 		gbc_lblNewLabel_1.anchor = GridBagConstraints.WEST;
@@ -472,7 +472,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_lblNewLabel_1.gridx = 2;
 		gbc_lblNewLabel_1.gridy = 2;
 		panel_2.add(lblNewLabel_1, gbc_lblNewLabel_1);
-		
+
 		JTextArea txtIfList = new JTextArea();
 		GridBagConstraints gbc_txtIfList = new GridBagConstraints();
 		gbc_txtIfList.insets = new Insets(0, 0, 0, 5);
@@ -483,7 +483,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		txtIfList.setEditable(false);
 		txtIfList.setWrapStyleWord(true);
 		txtIfList.setText(getInterfaceList());
-		
+
 		JPanel panel_4 = new JPanel();
 		panel_4.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Custom Hosts file", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(59, 59, 59)));
 		GridBagConstraints gbc_panel_4 = new GridBagConstraints();
@@ -498,7 +498,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_panel_4.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gbl_panel_4.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		panel_4.setLayout(gbl_panel_4);
-		
+
 		JTextArea dnsHosts = new JTextArea();
 		dnsHosts.setText(this.readHosts());
 		dnsHosts.addKeyListener(new KeyAdapter() {
@@ -512,7 +512,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_dnsHosts.gridx = 0;
 		gbc_dnsHosts.gridy = 0;
 		panel_4.add(dnsHosts, gbc_dnsHosts);
-	
+
 		//tbm = (DefaultTableModel)ListTable.getModel();
 		tbm = new DefaultTableModel(){
 			 @Override
@@ -526,32 +526,32 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			    			   return false;
 			    	   }
 			    	   return true;
-			       }else if((boolean)tbm.getValueAt(row,0) && column == 5) 
+			       }else if((boolean)tbm.getValueAt(row,0) && column == 5)
 			    	   return false;
-			       else if(!(boolean)tbm.getValueAt(row,0) && column == 5) 
+			       else if(!(boolean)tbm.getValueAt(row,0) && column == 5)
 			    	   return true;
 			       else
 			    	   return false;
 			    }
-			
+
 		};
-		
+
 		String header[] = new String[]{"Enable","Listener","Server Address", "Server Port","Cert Host","SSL"};
 		tbm.setColumnIdentifiers(header);
-		
+
 		tbm.addTableModelListener(new TableModelListener() {
 
 			@SuppressWarnings("static-access")
 			@Override
 			public void tableChanged(TableModelEvent e) {
 
-				///OK something changed in the table... it could be a new row added or 
-				
-				
+				///OK something changed in the table... it could be a new row added or
+
+
 				if(e.getType()==e.UPDATE && e.getColumn() == 0){
 					int rowid = ListTable.getSelectedRow();
 					//System.out.println("Updated Table");
-					//update create 
+					//update create
 					if(((Boolean)tbm.getValueAt(rowid, 0))){
 						//Check if the port is in use
 						int listport = Integer.parseInt(""+tbm.getValueAt(rowid, 1));
@@ -561,7 +561,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 						}else if((Boolean)tbm.getValueAt(rowid, 5) && !checkCert()){
 							tbm.setValueAt(false, rowid, 0);
 							Callbacks.printOutput("SSL Cert is not installed correctly");
-							isSSL.setForeground(Color.red);	
+							isSSL.setForeground(Color.red);
 							lblNewLabel.setForeground(Color.red);
 							Timer timer = new Timer();
 							timer.schedule(new TimerTask() {
@@ -571,7 +571,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 									  lblNewLabel.setForeground(Color.black);
 								  }
 								}, 3*1000);
-							
+
 						}else{
 							///isSSL.setBackground();
 							GenericMiTMServer mtm = new GenericMiTMServer((Boolean)tbm.getValueAt(rowid, 5), Callbacks);
@@ -586,21 +586,21 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 							mtm.addPyEventListener(NonHttpUI.this);
 							if(btnIntercept.getText().endsWith("ON"))
 								mtm.setIntercept(true);
-							
+
 							if(isC2S.isSelected())
 								mtm.setInterceptDir(mtm.INTERCEPT_C2S);
 							else if(isS2C.isSelected())
 								mtm.setInterceptDir(mtm.INTERCEPT_S2C);
 							else if(isBoth.isSelected())
 								mtm.setInterceptDir(mtm.INTERCEPT_BOTH);
-							
+
 							//threads.put(mtm.ListenPort, mtm); /// track threads by the listening port
 							threads.put(listport, mtm); /// track threads by the rowid
 							Thread t = new Thread(mtm);
 							t.start();
 							currentListeners.addItem(listport + " - " + mtm.ServerAddress +":"+mtm.ServerPort);
-							
-							
+
+
 						}
 					}else if (e.getColumn() == 0){ //delete a server thread
 						int lPort = Integer.parseInt(""+tbm.getValueAt(rowid, 1));
@@ -625,10 +625,10 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				}
 			}
 		});
-		
-		
-		
-		
+
+
+
+
 		//#####################################################################################
 	    // Match and replace rules for  Options tab
 		String rules = getMatchRules();
@@ -647,9 +647,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 					+ "#\r\n"
 					+ "# For example to modify only client to server traffic\r\n"
 					+ "# * 0x11223344||0x556677||c2sOnly";
-					
+
 		}
-		
+
 		Callbacks.customizeUiComponent(Options);
 
 		//#####################################################################################
@@ -678,7 +678,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_panel_3.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gbl_panel_3.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		panel_3.setLayout(gbl_panel_3);
-		
+
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		splitPane.setBounds(6, 238, 989, 462);
@@ -693,18 +693,18 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		logTable.getColumnModel().getColumn(0).setPreferredWidth(50);//index
 		logTable.getColumnModel().getColumn(1).setPreferredWidth(160);//Time
 		logTable.getColumnModel().getColumn(2).setPreferredWidth(550);//Direction
-		
+
 		logTable.getColumnModel().getColumn(3).setPreferredWidth(150);//Sip
 		logTable.getColumnModel().getColumn(4).setPreferredWidth(60);//Sport
 		logTable.getColumnModel().getColumn(5).setPreferredWidth(150);//dip
 		logTable.getColumnModel().getColumn(6).setPreferredWidth(60);//dport
 		logTable.getColumnModel().getColumn(6).setPreferredWidth(50);//bytes
-		
-		
+
+
 		JScrollPane logscrollPane = new JScrollPane(logTable);
 		splitPane.setLeftComponent(logscrollPane);
-		
-		
+
+
 		JPopupMenu jpm = new JPopupMenu();
 		JMenuItem menuItem = new JMenuItem("Send To Comparer");
 		menuItem.addActionListener(new ActionListener() {
@@ -713,9 +713,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			}
 		});
 		jpm.add(menuItem);
-		
 
-		
+
+
 		JPanel panel_5 = new JPanel();
 		panel_5.setBorder(null);
 		splitPane.setRightComponent(panel_5);
@@ -725,7 +725,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_panel_5.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, Double.MIN_VALUE};
 		gbl_panel_5.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		panel_5.setLayout(gbl_panel_5);
-		
+
 		// This button even will set focus on the currently selected tcp message.
 		// This is usefull when several messages scroll across the table. It becomes
 		// easy to loose your place.
@@ -745,7 +745,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnGoBack.gridx = 0;
 		gbc_btnGoBack.gridy = 0;
 		panel_5.add(btnGoBack, gbc_btnGoBack);
-		
+
 		// UI Element to display the current selection in the tcp log
 		lblSelected = new JLabel("Selected");
 		GridBagConstraints gbc_lblSelected = new GridBagConstraints();
@@ -756,7 +756,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		panel_5.add(lblSelected, gbc_lblSelected);
 		//This allows the table model to update the label text when an element is selected.
 		ntbm.label = lblSelected;
-		
+
 		JLabel lblSearch = new JLabel("");//Search
 		lblSearch.setIcon(IconFontSwing.buildIcon(FontAwesome.SEARCH,16, NopeOrange));
 		GridBagConstraints gbc_lblSearch = new GridBagConstraints();
@@ -765,9 +765,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_lblSearch.gridx = 2;
 		gbc_lblSearch.gridy = 0;
 		panel_5.add(lblSearch, gbc_lblSearch);
-		
+
 		searchDb = new JTextField();
-		
+
 		searchDb.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
@@ -797,10 +797,10 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 						LinkedList<LogEntry> list = LogEntry.restoreDB();
 						for(LogEntry le : list){
 							ntbm.log.add(le);
-							
+
 						}
 						ntbm.fireTableDataChanged();
-						
+
 					}
 				}
 			}
@@ -812,7 +812,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_searchDb.gridy = 0;
 		panel_5.add(searchDb, gbc_searchDb);
 		searchDb.setColumns(10);
-		
+
 		JTabbedPane tabs = new JTabbedPane();
 		GridBagConstraints gbc_tabs = new GridBagConstraints();
 		gbc_tabs.anchor = GridBagConstraints.WEST;
@@ -822,22 +822,22 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_tabs.gridx = 0;
 		gbc_tabs.gridy = 1;
 		panel_5.add(tabs, gbc_tabs);
-		
-		
+
+
 
 		//Decorate Tabs to match Burp message editor
 		tabs.addTab("Message", ntbm.requestViewer.getComponent());
 		tabs.addTab("Original", ntbm.originalViewer.getComponent());
-		
-		
-	
-		
+
+
+
+
 		Callbacks.customizeUiComponent(History);
-		
-		
-		
-		
-		
+
+
+
+
+
 		//#####################################################################################
 	    // SetUp UI for Interceptor tab
 		btnIntercept = new JButton("Intercept is OFF");
@@ -956,14 +956,14 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		panel_3.add(isBoth, gbc_isBoth);
 		isBoth.setSelected(true);
 		isBoth.setBounds(800, 206, 66, 23);
-		
+
 		Component rigidArea = Box.createRigidArea(new Dimension(20, 20));
 		GridBagConstraints gbc_rigidArea = new GridBagConstraints();
 		gbc_rigidArea.insets = new Insets(0, 0, 0, 5);
 		gbc_rigidArea.gridx = 6;
 		gbc_rigidArea.gridy = 0;
 		panel_3.add(rigidArea, gbc_rigidArea);
-		
+
 		Component rigidArea_2 = Box.createRigidArea(new Dimension(20, 20));
 		GridBagConstraints gbc_rigidArea_2 = new GridBagConstraints();
 		gbc_rigidArea_2.insets = new Insets(0, 0, 0, 5);
@@ -978,8 +978,8 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_interceptInfo.gridx = 10;
 		gbc_interceptInfo.gridy = 0;
 		panel_3.add(interceptInfo, gbc_interceptInfo);
-		
-		
+
+
 		JTabbedPane interceptPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_repeaterPane = new GridBagConstraints();
 		gbc_repeaterPane.fill = GridBagConstraints.BOTH;
@@ -987,21 +987,21 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_repeaterPane.gridy = 1;
 		intbm = new NonHTTPTableModel();
 		intbm.requestViewer = Callbacks.createMessageEditor(intbm,true);
-		
+
 		//This decorates the intercept tabs to be like brup message tables
 		interceptPane.addTab("Message", intbm.requestViewer.getComponent());
 		Intercept.add(interceptPane, gbc_repeaterPane);
-		
-		Callbacks.customizeUiComponent(Intercept);
-		
-		
-	
 
-		
+		Callbacks.customizeUiComponent(Intercept);
+
+
+
+
+
 		//#####################################################################################
 		// Finalizing Setup functions
-		
-		
+
+
 		if(AUTOSTART){
 			btnStartDns.setText(""); // Stop DNS
 			btnStartDns.setIcon(IconFontSwing.buildIcon(FontAwesome.STOP,40));
@@ -1013,22 +1013,22 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			chckbxStartDnsOn.setSelected(true);
 		else
 			chckbxStartDnsOn.setSelected(false);
-		
+
 		// Update the network interface information
 		updateInterfaceInformation();
 		// order the tabs
 		BurpTabs.addTab("TCP Intercept  ", Intercept);
 		BurpTabs.addTab("TCP History  ", splitPane);
 		//BurpTabs.setIconAt(4,IconFontSwing.buildIcon(FontAwesome.HISTORY,20, NopeOrange));
-		
+
 		JSplitPane RepeaterPanel = new JSplitPane();
 		RepeaterPanel.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		BurpTabs.addTab("TCP Repeater  ", null, RepeaterPanel, null);
-		
+
 		JPanel Repeater = new JPanel();
 		RepeaterPanel.setLeftComponent(Repeater);
-				
-		
+
+
 
 		//BurpTabs.addTab("TCP Repeater  ", null, Repeater, null);
 		//BurpTabs.setIconAt(2,IconFontSwing.buildIcon(FontAwesome.RECYCLE,20, NopePink));
@@ -1038,7 +1038,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_Repeater.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_Repeater.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		Repeater.setLayout(gbl_Repeater);
-		
+
 		JButton btnNewButton = new JButton("");//
 		btnNewButton.setLayout(new BoxLayout(btnNewButton, BoxLayout.X_AXIS));
 		JLabel serverIconLabel = new JLabel();
@@ -1049,8 +1049,8 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		btnNewButton.add(directionIconLabel);
 		btnNewButton.add(serverIconLabel);
 		btnNewButton.add(toSeverText);
-		
-		
+
+
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(currentListeners.getSelectedItem() != null){
@@ -1061,10 +1061,10 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 					//TODO: I need to match ephemeral ports here because there can be several threads on the same server.
 					x.repeatToServer(repeater.getMessage(), port);
 				}
-				
+
 			}
 		});
-		
+
 		JLabel lblClientAndServer = new JLabel("Client and Server must be connected for this to function properly");
 		lblClientAndServer.setFont(new Font("SansSerif", Font.ITALIC, 12));
 		GridBagConstraints gbc_lblClientAndServer = new GridBagConstraints();
@@ -1078,7 +1078,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnNewButton.gridx = 3;
 		gbc_btnNewButton.gridy = 0;
 		Repeater.add(btnNewButton, gbc_btnNewButton);
-		
+
 		JLabel lblSelectAStream = new JLabel("Select A Stream to Repeat Request:");
 		lblSelectAStream.setFont(new Font("SansSerif", Font.BOLD, 12));
 		GridBagConstraints gbc_lblSelectAStream = new GridBagConstraints();
@@ -1087,7 +1087,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_lblSelectAStream.gridx = 0;
 		gbc_lblSelectAStream.gridy = 1;
 		Repeater.add(lblSelectAStream, gbc_lblSelectAStream);
-		
+
 		currentListeners = new JComboBox();
 		GridBagConstraints gbc_currentListeners = new GridBagConstraints();
 		gbc_currentListeners.insets = new Insets(0, 0, 5, 5);
@@ -1095,7 +1095,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_currentListeners.gridx = 1;
 		gbc_currentListeners.gridy = 1;
 		Repeater.add(currentListeners, gbc_currentListeners);
-		
+
 		JButton btnSendToClient = new JButton("");/// Send to Client
 		btnSendToClient.setLayout(new BoxLayout(btnSendToClient, BoxLayout.X_AXIS));
 		JLabel clientIconLabel = new JLabel();
@@ -1123,7 +1123,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnSendToClient.gridx = 3;
 		gbc_btnSendToClient.gridy = 1;
 		Repeater.add(btnSendToClient, gbc_btnSendToClient);
-		
+
 		repeaterPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_repeaterPane2 = new GridBagConstraints();
 		gbc_repeaterPane2.gridwidth = 2;
@@ -1134,9 +1134,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		RepeaterJPane repeaterJPane = new RepeaterJPane();
 		repeater = Callbacks.createMessageEditor(repeaterJPane, true);
 		Repeater.add(repeaterPane, gbc_repeaterPane2);
-		
+
 		repeaterPane.addTab("Message", repeater.getComponent());
-		
+
 		Component rigidArea_1 = Box.createRigidArea(new Dimension(20, 20));
 		GridBagConstraints gbc_rigidArea_1 = new GridBagConstraints();
 		gbc_rigidArea_1.fill = GridBagConstraints.VERTICAL;
@@ -1144,7 +1144,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_rigidArea_1.gridx = 4;
 		gbc_rigidArea_1.gridy = 2;
 		Repeater.add(rigidArea_1, gbc_rigidArea_1);
-		
+
 		JPanel genCodePanel = new JPanel();
 		RepeaterPanel.setRightComponent(genCodePanel);
 		GridBagLayout gbl_genCodePanel = new GridBagLayout();
@@ -1153,7 +1153,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_genCodePanel.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_genCodePanel.rowWeights = new double[]{0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
 		genCodePanel.setLayout(gbl_genCodePanel);
-		
+
 		RSyntaxTextArea pyRepeaterCode = new RSyntaxTextArea();
 		pyRepeaterCode.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
 		pyRepeaterCode.setCodeFoldingEnabled(true);
@@ -1164,7 +1164,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		ptscheme.getStyle(Token.FUNCTION).foreground = new Color(135, 211, 124);
 		pyRepeaterCode.setHighlightCurrentLine(false);
 		pyRepeaterCode.revalidate();
-		
+
 		JLabel repeaterCodeLabel = new JLabel("Code Playground");
 		repeaterCodeLabel.setIcon(IconFontSwing.buildIcon(FontAwesome.CODE,18, NopeGreen));
 		GridBagConstraints gbc_repeaterCodeLabel = new GridBagConstraints();
@@ -1175,14 +1175,14 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		genCodePanel.add(repeaterCodeLabel, gbc_repeaterCodeLabel);
 		pyRepeaterCode.setBackground(new Color(44, 62, 80));
 		pyRepeaterCode.setForeground(Color.WHITE);
-		
+
 		GridBagConstraints gbc_pyRepeaterCode = new GridBagConstraints();
 		gbc_pyRepeaterCode.insets = new Insets(0, 0, 5, 5);
 		gbc_pyRepeaterCode.fill = GridBagConstraints.BOTH;
 		gbc_pyRepeaterCode.gridx = 1;
 		gbc_pyRepeaterCode.gridy = 2;
 		genCodePanel.add(pyRepeaterCode, gbc_pyRepeaterCode);
-		
+
 		JPanel panel_7 = new JPanel();
 		GridBagConstraints gbc_panel_7 = new GridBagConstraints();
 		gbc_panel_7.insets = new Insets(0, 0, 5, 0);
@@ -1197,7 +1197,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_panel_7.columnWeights = new double[]{0.0, Double.MIN_VALUE};
 		gbl_panel_7.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_7.setLayout(gbl_panel_7);
-		
+
 		JButton rptGenCode = new JButton("Gen Code");
 		rptGenCode.setIcon(IconFontSwing.buildIcon(FontAwesome.CODE,18, NopeGreen));
 		GridBagConstraints gbc_rptGenCode = new GridBagConstraints();
@@ -1206,11 +1206,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_rptGenCode.gridx = 0;
 		gbc_rptGenCode.gridy = 0;
 		panel_7.add(rptGenCode, gbc_rptGenCode);
-		
-		
-		
-		
-		
+
+
+
+
+
 		JButton btnServerCode = new JButton(""); // Repeater Code to Server
 		btnServerCode.setLayout(new BoxLayout(btnServerCode, BoxLayout.X_AXIS));
 		JLabel serverIconLabel1 = new JLabel();
@@ -1221,7 +1221,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		btnServerCode.add(directionIconLabel1);
 		btnServerCode.add(serverIconLabel1);
 		btnServerCode.add(toSeverText1);
-		
+
 		btnServerCode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String code = pyRepeaterCode.getText();
@@ -1243,15 +1243,15 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 					}else{
 						repCodeOutput.setText("");
 						repCodeOutput.setText("Something is wrong with your code. Missing function sendPayload maybe?");
-						
+
 					}
 				}catch(Exception ex){
 					repCodeOutput.setText("");
 					repCodeOutput.setText(ex.getMessage()+"\n\nCast exceptions usually are cause becuase you are trying to return something that is not a byte array? \nexample: \n  return bytearray('somestring') ");
 				}
-				
-				
-				
+
+
+
 			}
 		});
 		GridBagConstraints gbc_btnServerCode = new GridBagConstraints();
@@ -1260,7 +1260,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnServerCode.gridx = 0;
 		gbc_btnServerCode.gridy = 1;
 		panel_7.add(btnServerCode, gbc_btnServerCode);
-		
+
 		JButton btnClientCode = new JButton(""); // repeater code client
 		btnClientCode.setLayout(new BoxLayout(btnClientCode, BoxLayout.X_AXIS));
 		JLabel clientIconLabel1 = new JLabel();
@@ -1271,11 +1271,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		btnClientCode.add(clientIconLabel1);
 		btnClientCode.add(clientDirIconLabel1);
 		btnClientCode.add(toClientText1);
-		
+
 		btnClientCode.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String code = pyRepeaterCode.getText();
-				 
+
 				try{
 					HashMap<String, Object> out = PythonMangler.runRepeaterCode(code);
 					if(out != null){
@@ -1294,7 +1294,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 					}else{
 						repCodeOutput.setText("");
 						repCodeOutput.setText("Something is wrong with your code. Missing function sendPayload maybe?");
-						
+
 					}
 				}catch(Exception ex){
 					repCodeOutput.setText("");
@@ -1307,7 +1307,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnClientCode.gridx = 0;
 		gbc_btnClientCode.gridy = 2;
 		panel_7.add(btnClientCode, gbc_btnClientCode);
-		
+
 		repCodeOutput = new RSyntaxTextArea();
 		repCodeOutput.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
 		GridBagConstraints gbc_repCodeOutput = new GridBagConstraints();
@@ -1331,11 +1331,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 						pyRepeaterCode.setText(newCode);
 					}
 				}
-				
+
 			}
 		});
-		
-		
+
+
 		JPanel Automation = new JPanel();
 		BurpTabs.addTab("Automation  ", null, Automation, null);
 		//BurpTabs.setIconAt(3,IconFontSwing.buildIcon(FontAwesome.CODE,20, NopeGreen));
@@ -1347,7 +1347,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_Automation.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		Automation.setLayout(gbl_Automation);
 		PythonMangler pm = new PythonMangler();
-		
+
 		JSplitPane splitPane_1 = new JSplitPane();
 		splitPane_1.setResizeWeight(0.5);
 		splitPane_1.setOneTouchExpandable(true);
@@ -1357,7 +1357,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_splitPane_1.gridx = 0;
 		gbc_splitPane_1.gridy = 0;
 		Automation.add(splitPane_1, gbc_splitPane_1);
-		
+
 		JPanel panel_8 = new JPanel();
 		splitPane_1.setRightComponent(panel_8);
 		GridBagLayout gbl_panel_8 = new GridBagLayout();
@@ -1366,14 +1366,14 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_panel_8.columnWeights = new double[]{0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
 		gbl_panel_8.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		panel_8.setLayout(gbl_panel_8);
-		
+
 		chckbxEnablePythonMangler = new JCheckBox("Enable Python Mangler");
 		GridBagConstraints gbc_chckbxEnablePythonMangler = new GridBagConstraints();
 		gbc_chckbxEnablePythonMangler.insets = new Insets(0, 0, 5, 5);
 		gbc_chckbxEnablePythonMangler.gridx = 0;
 		gbc_chckbxEnablePythonMangler.gridy = 0;
 		panel_8.add(chckbxEnablePythonMangler, gbc_chckbxEnablePythonMangler);
-		
+
 		JButton btnImportPython = new JButton("Import Python");
 		btnImportPython.setIcon(IconFontSwing.buildIcon(FontAwesome.FILE_CODE_O,16, NopeGreen));
 		GridBagConstraints gbc_btnImportPython = new GridBagConstraints();
@@ -1381,7 +1381,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnImportPython.gridx = 1;
 		gbc_btnImportPython.gridy = 0;
 		panel_8.add(btnImportPython, gbc_btnImportPython);
-		
+
 		JButton btnExportPython = new JButton("Export Python");
 		btnExportPython.setIcon(IconFontSwing.buildIcon(FontAwesome.FILE_CODE_O,16, NopeBlue));
 		GridBagConstraints gbc_btnExportPython = new GridBagConstraints();
@@ -1390,7 +1390,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnExportPython.gridx = 2;
 		gbc_btnExportPython.gridy = 0;
 		panel_8.add(btnExportPython, gbc_btnExportPython);
-		
+
 		JButton btnClearConsole = new JButton("Clear Console");
 		btnClearConsole.setIcon(IconFontSwing.buildIcon(FontAwesome.BAN,20, NopeRed));
 		btnClearConsole.addActionListener(new ActionListener() {
@@ -1404,7 +1404,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnClearConsole.gridx = 3;
 		gbc_btnClearConsole.gridy = 0;
 		panel_8.add(btnClearConsole, gbc_btnClearConsole);
-		
+
 		JSplitPane splitPane_2 = new JSplitPane();
 		splitPane_2.setResizeWeight(0.5);
 		GridBagConstraints gbc_splitPane_2 = new GridBagConstraints();
@@ -1413,12 +1413,12 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_splitPane_2.gridx = 0;
 		gbc_splitPane_2.gridy = 1;
 		panel_8.add(splitPane_2, gbc_splitPane_2);
-		
+
 		JScrollPane scrollPane_2 = new JScrollPane();
 		splitPane_2.setLeftComponent(scrollPane_2);
-		
-		
-		
+
+
+
 		pythonText = new RSyntaxTextArea();
 		pythonText.setText(pm.getPyCode());
 		//pythonText = new JEditorPane();
@@ -1429,11 +1429,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = new Color(253, 227, 167);
 		scheme.getStyle(Token.OPERATOR).foreground = new Color(137, 196, 244);
 		scheme.getStyle(Token.FUNCTION).foreground = new Color(135, 211, 124);
-		
-		
+
+
 
 		pythonText.setHighlightCurrentLine(false);
-		
+
 		pythonText.revalidate();
 		pythonText.setBackground(new Color(44, 62, 80));
 		pythonText.setForeground(Color.WHITE);
@@ -1445,19 +1445,19 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				pm.setPyCode(pythonText.getText());
 			}
 		});
-		
+
 		scrollPane_2.setViewportView(pythonText);
-		
-		
+
+
 		JScrollPane scrollPane_3 = new JScrollPane();
 		splitPane_2.setRightComponent(scrollPane_3);
-		
+
 		PythonConsole = new JEditorPane();
 		PythonConsole.setEditable(false);
 		PythonConsole.setContentType("text/html");
-		
+
 		scrollPane_3.setViewportView(PythonConsole);
-		
+
 		JPanel panel_6 = new JPanel();
 		splitPane_1.setLeftComponent(panel_6);
 		GridBagLayout gbl_panel_6 = new GridBagLayout();
@@ -1466,7 +1466,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_panel_6.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		gbl_panel_6.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		panel_6.setLayout(gbl_panel_6);
-		
+
 		errorMsg = new JLabel("");
 		GridBagConstraints gbc_errorMsg = new GridBagConstraints();
 		gbc_errorMsg.fill = GridBagConstraints.HORIZONTAL;
@@ -1475,7 +1475,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_errorMsg.gridy = 0;
 		panel_6.add(errorMsg, gbc_errorMsg);
 		errorMsg.setForeground(Color.RED);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
@@ -1483,7 +1483,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		panel_6.add(scrollPane, gbc_scrollPane);
-		
+
 		txtRules = new RSyntaxTextArea();
 		txtRules.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
 		SyntaxScheme matchScheme = txtRules.getSyntaxScheme();
@@ -1492,10 +1492,10 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		matchScheme.getStyle(Token.OPERATOR).foreground = new Color(137, 196, 244);
 		matchScheme.getStyle(Token.FUNCTION).foreground = new Color(135, 211, 124);
 		txtRules.revalidate();
-		
+
 
 		pythonText.setHighlightCurrentLine(false);
-		
+
 		pythonText.revalidate();
 		txtRules.setTabSize(3);
 		scrollPane.setViewportView(txtRules);
@@ -1503,7 +1503,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			@Override
 			public void keyReleased(KeyEvent e) {
 				updateMatchRules();
-				
+
 			}
 		});
 		txtRules.setText(rules);
@@ -1516,7 +1516,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				    }
 				});
 				fileDialog.setVisible(true);
-				
+
 				String filename = fileDialog.getDirectory() + fileDialog.getFile();
 				if(filename != null){
 					File f = new File(filename);
@@ -1550,24 +1550,24 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				String filename = fileDialog.getDirectory() + fileDialog.getFile();
 				if(filename != null){
 					Path p = Paths.get(filename);
-					
+
 					try (BufferedReader reader = Files.newBufferedReader(p)) {
 						String line = "";
 						String code="";
-						
+
 						while( (line = reader.readLine()) != null ){
 							code += line + "\r\n";
 						}
 						pythonText.setText(code);
 						PythonMangler pm = new PythonMangler();
 						pm.setPyCode(code);
-						
-						
+
+
 					}catch(Exception ex){
 						ex.printStackTrace();
 					}
 				}
-			        
+
 			}
 		});
 		chckbxEnablePythonMangler.addActionListener(new ActionListener() {
@@ -1580,9 +1580,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				}*/
 			}
 		});
-		
-		
-		
+
+
+
 		//#####################################################################################
 		// Setup UI for DNS log
 		JPanel DNSPanel = new JPanel();
@@ -1594,7 +1594,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		DNSPanel.setLayout(gbl_DNSPanel);
 		BurpTabs.addTab("DNS History  ", null, DNSPanel, null);
 		//BurpTabs.setIconAt(0,IconFontSwing.buildIcon(FontAwesome.EYE,20, NopeBlue));
-		
+
 		JScrollPane DNSRequests = new JScrollPane();
 		GridBagConstraints gbc_DNSRequests = new GridBagConstraints();
 		gbc_DNSRequests.fill = GridBagConstraints.BOTH;
@@ -1616,9 +1616,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			}
 		};
 		DnsListTable.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		
+
 				DNSRequests.setViewportView(DnsListTable);
-				
+
 				Component rigidArea_3 = Box.createRigidArea(new Dimension(20, 20));
 				GridBagConstraints gbc_rigidArea_3 = new GridBagConstraints();
 				gbc_rigidArea_3.fill = GridBagConstraints.VERTICAL;
@@ -1626,7 +1626,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbc_rigidArea_3.gridx = 1;
 				gbc_rigidArea_3.gridy = 0;
 				DNSPanel.add(rigidArea_3, gbc_rigidArea_3);
-				
+
 				JPanel panel_9 = new JPanel();
 				GridBagConstraints gbc_panel_9 = new GridBagConstraints();
 				gbc_panel_9.fill = GridBagConstraints.BOTH;
@@ -1639,7 +1639,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbl_panel_9.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
 				gbl_panel_9.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 				panel_9.setLayout(gbl_panel_9);
-				
+
 				JButton btnPortMonitor = new JButton("");
 				btnPortMonitor.setIcon(IconFontSwing.buildIcon(FontAwesome.PLAY,20));
 				btnPortMonitor.setBackground(NopeGreen);
@@ -1651,13 +1651,13 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 							lister = new Lister( dnsIpTxt.getText());
 							lister.addEventListener(new TCPConnectionAttemptListener(){
 								DefaultTableModel model = (DefaultTableModel) portTable.getModel();
-								
-	
+
+
 								@Override
 								public void TcpConnAttempt(TCPPacketEvt pkt) {
 									BurpTabs.setIconAt(4,IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PUBLIC,20, NopeRed));
 									Vector<Object> vec = new Vector<Object>();
-									
+
 									vec.add(model.getRowCount());
 									vec.add(1, pkt.getTime());
 									vec.add(2, pkt.getSip());
@@ -1671,10 +1671,10 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 											  BurpTabs.setIconAt(4,IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PUBLIC,20, NopePurple));
 										  }
 										}, 2*1000);
-									
-									
+
+
 								}
-								
+
 							});
 							Thread listerThread = new Thread(lister);
 							listerThread.start();
@@ -1682,12 +1682,12 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 							lister.kill();
 							lister = null;
 							btnPortMonitor.setIcon(IconFontSwing.buildIcon(FontAwesome.PLAY,20));
-							
+
 							btnPortMonitor.setBackground(NopeGreen);
 						}
 					}
 				});
-				
+
 				JLabel lblPortMonitor = new JLabel("Port Monitor");
 				Font portFont = UIManager.getFont("Label.font").deriveFont(Font.BOLD);
 				lblPortMonitor.setFont(portFont);
@@ -1697,7 +1697,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbc_lblPortMonitor.gridx = 1;
 				gbc_lblPortMonitor.gridy = 0;
 				panel_9.add(lblPortMonitor, gbc_lblPortMonitor);
-				
+
 				JLabel lblNewLabel_2 = new JLabel("Ensure you have libpcap or winpcap installed .");
 				GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
 				gbc_lblNewLabel_2.fill = GridBagConstraints.HORIZONTAL;
@@ -1711,7 +1711,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbc_btnPortMonitor.gridx = 1;
 				gbc_btnPortMonitor.gridy = 1;
 				panel_9.add(btnPortMonitor, gbc_btnPortMonitor);
-				
+
 				JScrollPane scrollPane_4 = new JScrollPane();
 				GridBagConstraints gbc_scrollPane_4 = new GridBagConstraints();
 				gbc_scrollPane_4.gridwidth = 2;
@@ -1719,7 +1719,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbc_scrollPane_4.gridx = 0;
 				gbc_scrollPane_4.gridy = 3;
 				panel_9.add(scrollPane_4, gbc_scrollPane_4);
-				
+
 				portTable = new JTable();
 				portTable.setModel(new DefaultTableModel(
 					new Object[][] {
@@ -1731,16 +1731,16 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				portTable.getColumnModel().getColumn(0).setMaxWidth(50);
 				portTable.setFont(new Font("SansSerif", Font.PLAIN, 16));
 				scrollPane_4.setViewportView(portTable);
-				
+
 				dnstTbm = (DefaultTableModel)DnsListTable.getModel();
 				String DNSheader[] = new String[]{"Time","Domain","Resolved Ip", "Client Address", "Client Name"};
 				dnstTbm.setColumnIdentifiers(DNSheader);
-				
+
 		//BurpTabs.addTab("DNS History  ", null, DNSRequests, null);
 		//BurpTabs.setIconAt(4,IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PUBLIC,20, NopePurple));
 		BurpTabs.add("Server Config  ", Options);
 		//BurpTabs.setIconAt(5,IconFontSwing.buildIcon(FontAwesome.COGS,20, NopePink));
-		
+
 		//#####################################################################################
 	    // Mitm Listner tables and controls for  Options tab
 		JPanel panel_1 = new JPanel();
@@ -1756,7 +1756,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbl_panel_1.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 				gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 				panel_1.setLayout(gbl_panel_1);
-						
+
 						/// Buttons for Clear History, export database, import database, add proxy, remove proxy
 						JButton btnAdd = new JButton("");//ADD Listener
 						btnAdd.setIcon(IconFontSwing.buildIcon(FontAwesome.PLUS_CIRCLE, 50, NopeGreen)); //Greeen
@@ -1782,28 +1782,28 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 								vec.add(certName.getText());
 								if(isSSL.isSelected())
 									vec.add(true);
-								else 
+								else
 									vec.add(false);
 
 								tbm.addRow(vec);
 								int rowInserted=tbm.getRowCount()-1;
 								tbm.fireTableRowsInserted(rowInserted,rowInserted);
-								ListenerSetting ls = new ListenerSetting(Integer.parseInt(LstnPort.getText()), 
-										Integer.parseInt(SvrPort.getText()), 
-										SvrAddr.getText(), 
-										certName.getText(), 
+								ListenerSetting ls = new ListenerSetting(Integer.parseInt(LstnPort.getText()),
+										Integer.parseInt(SvrPort.getText()),
+										SvrAddr.getText(),
+										certName.getText(),
 										isSSL.isSelected());
-								
+
 								ListenerDB.add(ls);
-								
-								
-									
+
+
+
 								//}
 
 							}
-							
+
 						});
-						
+
 						JLabel lblcertName = new JLabel("Certificate  HostName:");
 						GridBagConstraints gbc_lblcertName = new GridBagConstraints();
 						gbc_lblcertName.anchor = GridBagConstraints.SOUTH;
@@ -1812,9 +1812,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 						gbc_lblcertName.gridx = 1;
 						gbc_lblcertName.gridy = 0;
 						panel_1.add(lblcertName, gbc_lblcertName);
-				
-						
-				
+
+
+
 						JLabel lblAddress = new JLabel("Server Address:");
 						GridBagConstraints gbc_lblAddress = new GridBagConstraints();
 						gbc_lblAddress.anchor = GridBagConstraints.SOUTHWEST;
@@ -1822,7 +1822,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 						gbc_lblAddress.gridx = 2;
 						gbc_lblAddress.gridy = 0;
 						panel_1.add(lblAddress, gbc_lblAddress);
-						
+
 						JLabel lblLstnPort = new JLabel("Server Port:");
 						GridBagConstraints gbc_lblLstnPort = new GridBagConstraints();
 						gbc_lblLstnPort.anchor = GridBagConstraints.SOUTH;
@@ -1831,7 +1831,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 						gbc_lblLstnPort.gridx = 3;
 						gbc_lblLstnPort.gridy = 0;
 						panel_1.add(lblLstnPort, gbc_lblLstnPort);
-				
+
 						JLabel lblPort = new JLabel("Listen Port:");
 						GridBagConstraints gbc_lblPort = new GridBagConstraints();
 						gbc_lblPort.anchor = GridBagConstraints.SOUTH;
@@ -1841,7 +1841,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 						gbc_lblPort.gridx = 4;
 						gbc_lblPort.gridy = 0;
 						panel_1.add(lblPort, gbc_lblPort);
-				
+
 				isSSL = new JCheckBox("SSL - (Export Burp's CACert as pkcs12 with  password 'changeit'. ");
 				//isSSL.setIcon(IconFontSwing.buildIcon(Elusive.LOCK_ALT,16));
 				isSSL.setBackground(UIManager.getColor("ArrowButton.background"));
@@ -1854,7 +1854,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbc_isSSL.gridx = 5;
 				gbc_isSSL.gridy = 0;
 				panel_1.add(isSSL, gbc_isSSL);
-				
+
 				certName = new JTextField();
 				certName.setText("www.example.com");
 				GridBagConstraints gbc_certName = new GridBagConstraints();
@@ -1875,7 +1875,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				gbc_SvrAddr.gridy = 1;
 				panel_1.add(SvrAddr, gbc_SvrAddr);
 				SvrAddr.setColumns(10);
-										
+
 										JButton btnImportHistory = new JButton("Import History");
 										btnImportHistory.setIcon(IconFontSwing.buildIcon(FontAwesome.DATABASE,16, NopeOrange));
 										btnImportHistory.addActionListener(new ActionListener() {
@@ -1887,14 +1887,14 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 												Frame fr = new Frame();
 												FileDialog fd = new FileDialog(fr,"Import Database", FileDialog.LOAD);
 												fd.setVisible(true);
-												
+
 												String imported = fd.getDirectory() +  fd.getFile();
 												Path impPath = Paths.get(imported);
 												Path localPath = Paths.get(resultFile);
 												try {
 													HibHelper.getSessionFactory().close();
 													Thread.sleep(2000); // wait for the threads to close
-													
+
 													Files.copy(impPath, localPath, StandardCopyOption.REPLACE_EXISTING);
 													//Delete The current table;
 													int rowCount=ntbm.getRowCount();
@@ -1908,18 +1908,18 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 													if(rowCount > 0){
 														for (int i=lrowCount -1; i>=0; i--) {
 															tbm.removeRow(i);
-															
+
 														}
 													}
 													tbm.fireTableDataChanged();
-													
+
 													HibHelper.renew();
 													LinkedList<LogEntry> list = LogEntry.restoreDB();
 													for(LogEntry le : list){
 														ntbm.log.add(le);
 													}
 													ntbm.fireTableDataChanged();
-													
+
 													///Restore Listener Settings
 													List<ListenerSetting> settings = ListenerDB.restoreDB();
 													for(ListenerSetting ls : settings){
@@ -1931,25 +1931,25 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 														vec.add(ls.getCert());
 														vec.add(ls.isSsl());
 														tbm.addRow(vec);
-														
+
 													}
 													tbm.fireTableDataChanged();
-													
-													
-													
+
+
+
 												} catch (IOException e1) {
 													Callbacks.printError(e1.getMessage());
 												} catch (InterruptedException e1) {
 													// TODO Auto-generated catch block
 													e1.printStackTrace();
 												}
-												
+
 											}
 										});
-										
+
 												JButton btnRemoveProxy = new JButton("Remove Proxy");
 												btnRemoveProxy.setIcon(IconFontSwing.buildIcon(FontAwesome.MINUS_CIRCLE, 23, NopeRed)); //red
-												
+
 												btnRemoveProxy.addActionListener(new ActionListener() {
 													public void actionPerformed(ActionEvent e) {
 														if(ListTable.getSelectedRow() != -1){
@@ -1969,12 +1969,12 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 															}
 															tbm.removeRow(rowid);
 															tbm.fireTableRowsDeleted(rowid, rowid);
-															
+
 														}
-														
+
 													}
 												});
-												
+
 												SvrPort = new JTextField();
 												SvrPort.setText("1001");
 												GridBagConstraints gbc_SvrPort = new GridBagConstraints();
@@ -1985,7 +1985,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 												gbc_SvrPort.gridy = 1;
 												panel_1.add(SvrPort, gbc_SvrPort);
 												SvrPort.setColumns(10);
-												
+
 														LstnPort = new JTextField();
 														LstnPort.setText("1000");
 														GridBagConstraints gbc_LstnPort = new GridBagConstraints();
@@ -1996,7 +1996,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 														gbc_LstnPort.gridy = 1;
 														panel_1.add(LstnPort, gbc_LstnPort);
 														LstnPort.setColumns(10);
-												
+
 												lblNewLabel = new JLabel("Name the cert 'burpca.p12'  in Burp's installation folder)");
 												GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 												gbc_lblNewLabel.anchor = GridBagConstraints.NORTH;
@@ -2014,7 +2014,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 												gbc_btnRemoveProxy.gridx = 0;
 												gbc_btnRemoveProxy.gridy = 2;
 												panel_1.add(btnRemoveProxy, gbc_btnRemoveProxy);
-										
+
 										JButton btnAdd_1 = new JButton("Add 80 & 443 to Burp");
 										btnAdd_1.setIcon(IconFontSwing.buildIcon(FontAwesome.COGS,16, NopeOrange));
 										btnAdd_1.setToolTipText("This addes invisible proxy listeners to Burp's normal HTTP proxy configureation.");
@@ -2038,15 +2038,15 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 													listeners.add(list80);
 													listeners.add(list443);
 													Callbacks.loadConfigFromJson(jsonObject.toJSONString());
-													
-													
+
+
 												} catch (ParseException e) {
 													// TODO Auto-generated catch block
 													e.printStackTrace();
 												}
-												
+
 												//Callbacks.loadConfigFromJson(arg0);
-												
+
 											}
 										});
 										GridBagConstraints gbc_btnAdd_1 = new GridBagConstraints();
@@ -2064,7 +2064,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 										gbc_btnImportHistory.gridx = 6;
 										gbc_btnImportHistory.gridy = 2;
 										panel_1.add(btnImportHistory, gbc_btnImportHistory);
-										
+
 										JButton btnSaveHistory = new JButton("Export History");
 										btnSaveHistory.setIcon(IconFontSwing.buildIcon(FontAwesome.DATABASE,16, NopeBlue));
 										btnSaveHistory.addActionListener(new ActionListener() {
@@ -2076,7 +2076,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 												Frame fr = new Frame();
 												FileDialog fd = new FileDialog(fr,"Export File", FileDialog.SAVE);
 												fd.setVisible(true);
-												
+
 												String exported = fd.getDirectory() +  fd.getFile();
 												Path old = Paths.get(file);
 												Path newFile = Paths.get(exported);
@@ -2085,9 +2085,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 												} catch (IOException e1) {
 													Callbacks.printError(e1.getMessage());
 												}
-												
-												
-											
+
+
+
 											}
 										});
 										GridBagConstraints gbc_btnSaveHistory = new GridBagConstraints();
@@ -2096,7 +2096,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 										gbc_btnSaveHistory.gridx = 7;
 										gbc_btnSaveHistory.gridy = 2;
 										panel_1.add(btnSaveHistory, gbc_btnSaveHistory);
-										
+
 												JButton btnClearHistory = new JButton("Clear History");
 												btnClearHistory.setIcon(IconFontSwing.buildIcon(FontAwesome.DATABASE,16, NopeRed));
 												btnClearHistory.addActionListener(new ActionListener() {
@@ -2119,7 +2119,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 												gbc_btnClearHistory.gridx = 8;
 												gbc_btnClearHistory.gridy = 2;
 												panel_1.add(btnClearHistory, gbc_btnClearHistory);
-												
+
 												JScrollPane scrollPane_1 = new JScrollPane();
 												GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
 												gbc_scrollPane_1.fill = GridBagConstraints.BOTH;
@@ -2157,7 +2157,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 												ListTable.getColumnModel().getColumn(1).setMaxWidth(100);//listener port
 												ListTable.getColumnModel().getColumn(3).setMaxWidth(100);//server port
 												ListTable.getColumnModel().getColumn(5).setMaxWidth(50);//ssl
-												
+
 												///Restore Settings
 												List<ListenerSetting> settings = ListenerDB.restoreDB();
 												for(ListenerSetting ls : settings){
@@ -2169,12 +2169,12 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 													vec.add(ls.getCert());
 													vec.add(ls.isSsl());
 													tbm.addRow(vec);
-													
+
 												}
 												tbm.fireTableDataChanged();
-														
-		
-		
+
+
+
 		JPanel About = new JPanel();
 		BurpTabs.addTab("About   ", IconFontSwing.buildIcon(FontAwesome.INFO,16, NopeGrey), About, null);
 		GridBagLayout gbl_About = new GridBagLayout();
@@ -2183,30 +2183,30 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbl_About.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_About.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		About.setLayout(gbl_About);
-		
-		JLabel lblNopeProxy = new JLabel("NOn Http Protocol Extending (NoPE) Proxy");
+
+		JLabel lblNopeProxy = new JLabel("Non-Http Proxy");
 		GridBagConstraints gbc_lblNopeProxy = new GridBagConstraints();
 		gbc_lblNopeProxy.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNopeProxy.gridx = 1;
 		gbc_lblNopeProxy.gridy = 1;
 		About.add(lblNopeProxy, gbc_lblNopeProxy);
-		
+
 		JLabel lblVersion = new JLabel("Version 1.5.2");
 		GridBagConstraints gbc_lblVersion = new GridBagConstraints();
 		gbc_lblVersion.insets = new Insets(0, 0, 5, 5);
 		gbc_lblVersion.gridx = 1;
 		gbc_lblVersion.gridy = 2;
 		About.add(lblVersion, gbc_lblVersion);
-		
+
 		JLabel lblDevelopedByJosh = new JLabel("Developed By: Josh Summitt - @null0perat0r - josh.summitt@fusesoft.co");
 		lblDevelopedByJosh.addMouseListener(new MouseListener() {
-			
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent evt) {
 				try {
@@ -2218,25 +2218,25 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 		GridBagConstraints gbc_lblDevelopedByJosh = new GridBagConstraints();
@@ -2244,7 +2244,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_lblDevelopedByJosh.gridx = 1;
 		gbc_lblDevelopedByJosh.gridy = 4;
 		About.add(lblDevelopedByJosh, gbc_lblDevelopedByJosh);
-		
+
 		JButton btnHttpgithubcomsummitt = new JButton("https://github.com/summitt");
 		Icon ghicon = IconFontSwing.buildIcon(Elusive.GITHUB, 23);
 		btnHttpgithubcomsummitt.setIcon(ghicon);
@@ -2266,7 +2266,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		gbc_btnHttpgithubcomsummitt.gridx = 1;
 		gbc_btnHttpgithubcomsummitt.gridy = 6;
 		About.add(btnHttpgithubcomsummitt, gbc_btnHttpgithubcomsummitt);
-		
+
 		BurpTabs.setIconAt(0,IconFontSwing.buildIcon(FontAwesome.EYE,20, NopeBlue));
 		BurpTabs.setIconAt(1,IconFontSwing.buildIcon(FontAwesome.HISTORY,20, NopeOrange));
 		BurpTabs.setIconAt(2,IconFontSwing.buildIcon(FontAwesome.RECYCLE,20, NopePink));
@@ -2274,20 +2274,20 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		BurpTabs.setIconAt(4,IconFontSwing.buildIcon(GoogleMaterialDesignIcons.PUBLIC,20, NopePurple));
 		BurpTabs.setIconAt(5,IconFontSwing.buildIcon(FontAwesome.COGS,20, NopeRed));
 		BurpTabs.setIconAt(6,IconFontSwing.buildIcon(FontAwesome.INFO,20, NopeGrey));
-		
-		
+
+
 		// Add Tabs to main component
 		add(BurpTabs);
 		Callbacks.customizeUiComponent(BurpTabs);
-		
+
 		//Set DataUpdate Timer
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new UpdateDBTask(queue,ntbm, searchDb, BurpTabs), 0, 1*1500);
-		
-		
+
+
 	    //timer.schedule(new UpdateDBTask(queue,ntbm), 2 * 1000);
-		
-		
+
+
 
 
 	}
@@ -2316,14 +2316,14 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
 			return false;
 		}else{
 			return false;
 		}
 	}
 	private void saveHosts(String hosts){
-		
+
 		/*String fs =  System.getProperty("file.separator");
 		String file = System.getProperty("user.dir") + fs + "hosts.txt";*/
 		String path = System.getProperty("user.home");
@@ -2340,7 +2340,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			return;
 		}
 		Path p = Paths.get(file);
-		
+
 		Charset charset = Charset.forName("UTF-8");
 		try (BufferedWriter writer = Files.newBufferedWriter(p, charset)) {
 			writer.write(hosts);
@@ -2348,11 +2348,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 	private String readHosts(){
-		
+
 		//String fs =  System.getProperty("file.separator");
 		//String file = System.getProperty("user.dir") + fs + "hosts.txt";
 		String path = System.getProperty("user.home");
@@ -2362,12 +2362,12 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			return "";
 		}
 		Path p = Paths.get(file);
-		
+
 		BufferedReader reader;
 		String out="";
 		try {
 			reader = Files.newBufferedReader(p);
-			
+
 			String line="";
 			while ((line = reader.readLine()) != null) {
 				out+=line+"\r\n";
@@ -2376,11 +2376,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			out="";
 			e.printStackTrace();
 		}
-		
+
 		return out;
 	}
 	private void updateMatchRules(){
-	
+
 		//String fs =  System.getProperty("file.separator");
 		//String file = System.getProperty("user.dir") + fs + "nonHTTPmatch.txt";
 		String path = System.getProperty("user.home");
@@ -2397,13 +2397,13 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			return;
 		}
 		Path p = Paths.get(file);
-		
+
 		Charset charset = Charset.forName("UTF-8");
 		try (BufferedWriter writer = Files.newBufferedWriter(p, charset)) {
 			String rules= this.getTxtRules().getText();
 			String [] rs = rules.split("\n");
 			String error="";
-			
+
 			for(String r : rs){
 				if(r.trim().equals("")){ // blank line
 					writer.write("");
@@ -2417,20 +2417,20 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 					error = "3rd Argument must be 'both', 'c2sOnly', or 's2cOnly'";
 				}else{
 					error = "Rules Are Not Valid. Format: matchStr||replaceStr or 0x121212||0x131313";
-					
+
 				}
 			}
-			
+
 			errorMsg.setText(error);
-			
-		
-			
+
+
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 	}
 	private String getMatchRules(){
 		String out = "";
@@ -2449,7 +2449,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			return "";
 		}
 		Path p = Paths.get(file);
-		
+
 		Charset charset = Charset.forName("UTF-8");
 		try (BufferedReader reader = Files.newBufferedReader(p, charset)) {
 		    String line = null;
@@ -2460,9 +2460,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		    System.err.format("IOException: %s%n", x);
 		}
 		return out;
-		
+
 	}
-	
+
 	private String getInterfaceList(){
 		String out="";
 		Enumeration e;
@@ -2478,10 +2478,10 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			        InetAddress i = (InetAddress) ee.nextElement();
 			        if(i.getHostAddress().matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$")){
 			        	out += ifCount++ +") " + n.getName() + " : " + i.getHostAddress() + " : " + (n.getHardwareAddress() != null ? Hex.toHexString(n.getHardwareAddress()) : "") + "\n";
-			        	
-			        	
+
+
 			        }
-			    
+
 			    }
 			    ifCount++;
 			}
@@ -2490,7 +2490,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			e1.printStackTrace();
 		}
 		return out;
-		
+
 	}
 	private void updateInterface(String state){
 
@@ -2524,9 +2524,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 
 			e1.printStackTrace();
 		}
-		
+
 	}
-	
+
 	private String getProperties(String key){
 		return this.getProperties(key,"");
 	}
@@ -2546,7 +2546,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				f.createNewFile();
 			}
 			return config.getProperty(key, defaultValue);
-			
+
 
 		} catch (FileNotFoundException e1) {
 
@@ -2556,16 +2556,16 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			e1.printStackTrace();
 		}
 		return "";
-		
+
 	}
 
 	private void updateAutoStart(boolean state){
-		
+
 		if(state)
 			this.updateProperties("autoStart", "true");
 		else
 			this.updateProperties("autoStart", "false");
-			
+
 
 	}
 
@@ -2604,12 +2604,12 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			        	if(Integer.parseInt(IfTxtBox.getText()) == ifCount++){
 			        		lblCurrentIpAddress.setText("Current Ip Address: " + i.getHostAddress());
 			        		dnsIpTxt.setText(i.getHostAddress());
-			        		
+
 			        		break;
 			        	}
-			        	
+
 			        }
-			    
+
 			    }
 			    ifCount++;
 			}
@@ -2632,7 +2632,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 	private JPanel Intercept;
 	private RSyntaxTextArea repCodeOutput;
 	private JTable portTable;
-	
+
 	public synchronized void addEventListener(DNSConfigListener listener)	{
 		_listeners.add(listener);
 	}
@@ -2643,14 +2643,14 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 	@SuppressWarnings("rawtypes")
 	private synchronized void ToggleDNS(String Address, Integer Port){
 		Iterator i = _listeners.iterator();
-		
+
 		while(i.hasNext())	{
 			DNSEvent evt = new DNSEvent(this);
 			evt.setAddress(Address);
 			evt.setPort(Port);
 			((DNSConfigListener) i.next()).DNSToggle(evt);
 		}
-		
+
 	}
 
 	public synchronized void addEventListener(ProxyEventListener listener)	{
@@ -2670,15 +2670,15 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 	}
 	@Override
 	public void Intercepted(ProxyEvent evt, boolean isC2S) {
-		
+
 		BurpTabs.setSelectedIndex(0);
 		byte [] origReq = evt.getData();
 		intbm.requestViewer.setMessage(evt.getData(), true);
 		if(isC2S){
 			this.isC2S.setForeground(NopeBlue);
 			this.isC2S.setFont(new Font("Lucida Grande", Font.BOLD, 13));
-			
-			
+
+
 			interceptInfo.removeAll();
 			interceptInfo.setLayout(new BoxLayout(interceptInfo, BoxLayout.X_AXIS));
 			JLabel srcLabel = new JLabel(evt.getSrcIP() + ":" + evt.getSrcPort() + "  ");
@@ -2698,7 +2698,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			this.isS2C.setFont(new Font("Lucida Grande", Font.BOLD, 13));
 			/*interceptInfo.setText(evt.getDstIP() + ":"+evt.getDstPort() + " <<== " + evt.getSrcIP() + ":" + evt.getSrcPort());
 			interceptInfo.setForeground(new Color(0xE4, 0x31, 0x17));*/
-			
+
 			interceptInfo.removeAll();
 			interceptInfo.setLayout(new BoxLayout(interceptInfo, BoxLayout.X_AXIS));
 			JLabel dstLabel = new JLabel(evt.getDstIP() + ":"+evt.getDstPort() + "  ");
@@ -2717,9 +2717,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 
 		synchronized (intbm) {
 			try {
-				
+
 				intbm.wait();
-				
+
 				if(isC2S){
 					if(evt.isTCPMtm())
 						evt.getTCPMtm().forwardC2SRequest(intbm.requestViewer.getMessage());
@@ -2735,7 +2735,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 					queue.add(new LogEntry(intbm.requestViewer.getMessage(), origReq, evt.getSrcIP(), evt.getSrcPort(), evt.getDstIP(), evt.getDstPort(), evt.getDirection()/*+" - Intercepted - Not Changed"*/));
 				else
 					queue.add(new LogEntry(intbm.requestViewer.getMessage(),origReq, evt.getSrcIP(), evt.getSrcPort(), evt.getDstIP(), evt.getDstPort(), "** "+evt.getDirection()+" ** - Edited"));
-			
+
 				//ntbm.fireTableRowsInserted(0, 0);
 				intbm.requestViewer.setMessage(new byte[]{}, true);
 				interceptInfo.setText("");
@@ -2774,7 +2774,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 				break;
 			}
 		}
-		
+
 		dnstTbm.insertRow(0, vec);
 		/*Timer t = new Timer();
 		t.schedule(new TimerTask() {
@@ -2784,11 +2784,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			  }
 			}, 2*1000);
 			*/
-		
+
 	}
 	@Override
 	public void PythonMessages(PythonOutputEvent e) {
-		
+
 		String Output = "";
 		if(e.getDirection().startsWith("Client"))
 			Output += "<div style='background-color: #7f8c8d; color:white; font-family: 'Lucida Console', 'Lucida Sans Typewriter', monaco, 'Bitstream Vera Sans Mono', monospace;'>";
@@ -2800,9 +2800,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			Output += "###Messages:<br>";
 			Output +=  e.getMessage().replace(" ", "&nbsp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br/>");
 			Output += "</div><br/>";
-			
+
 		}
-		
+
 		if(!e.getError().equals("")){
 			Output += "<div style='color:#c0392b; font-size: 14px;'>";
 			Output += "###Errors:<br>";
@@ -2813,7 +2813,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 		//this.PythonConsole.setText(this.PythonConsole.getText() + "\n" +Output);
 		HTMLDocument doc = (HTMLDocument)PythonConsole.getDocument();
 		HTMLEditorKit editorKit = (HTMLEditorKit)PythonConsole.getEditorKit();
-		
+
 		try {
 			editorKit.insertHTML(doc, doc.getLength(), Output, 0, 0, null);
 		} catch (BadLocationException e1) {
@@ -2823,15 +2823,15 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		System.out.println(e.getError());
 		System.out.println(e.getMessage());
-		
+
 	}
 	public JTextArea getTxtRules() {
 		return txtRules;
 	}
-	
+
 	public JTextField getTxtDNSPort() {
 		return txtDNSPort;
 	}
@@ -2852,7 +2852,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 	protected JTabbedPane getRepeaterPane() {
 		return repeaterPane;
 	}
-	
+
 	class RepeaterJPane extends JTextPane implements IMessageEditorController{
 
 		@Override
@@ -2870,8 +2870,8 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 			return null;
 		}
 
-		
-		
+
+
 	}
 
 	protected JComboBox getCurrentListeners() {

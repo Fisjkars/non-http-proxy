@@ -33,8 +33,8 @@ import burp.*;
 
 	public class BurpExtender implements IBurpExtender, ITab, IContextMenuFactory
 	{
-	    private NonHttpUI dnsConfig; 
-		private UDPListener list; 
+	    private NonHttpUI dnsConfig;
+		private UDPListener list;
 		public IBurpExtenderCallbacks mCallbacks;
 		private IExtensionHelpers helpers;
 		private Thread ListThread = null;
@@ -46,46 +46,46 @@ import burp.*;
 	    {
 	        mCallbacks = callbacks;
 			helpers = mCallbacks.getHelpers();
-			mCallbacks.setExtensionName("NoPE Proxy");
+			mCallbacks.setExtensionName("Non-HTTP Proxy");
 			mCallbacks.registerContextMenuFactory(this);
-			
-			
-			
-			
-			
-			
+
+
+
+
+
+
 			 // create our UI
-	       SwingUtilities.invokeLater(new Runnable() 
+	       SwingUtilities.invokeLater(new Runnable()
 	        {
-	    	  
+
 
 				@Override
 				public void run() {
-						
+
 					 	dnsConfig = new NonHttpUI(mCallbacks, helpers, sb);
-					 
+
 
 						if(dnsConfig.DNSIP != null &&  !dnsConfig.equals("")){
 							list.ADDRESS = dnsConfig.DNSIP.split("\\.");
 						}
-						
+
 						list= new UDPListener(Integer.parseInt(dnsConfig.getTxtDNSPort().getText()), sb);
 						list.Callbacks = mCallbacks;
-					
+
 						list.addEventListener(new UDPEventListener(){
 
 							@Override
 							public void UDPDown(DNSEvent e) {
-								
+
 								mCallbacks.issueAlert("DNSMiTM: DNS Server Stopped.");
 								dnsConfig.DNSStopped();
 							}
-							
+
 						});
-						
+
 						list.addTableEventListener( dnsConfig);
-						
-						
+
+
 						dnsConfig.addEventListener( new DNSConfigListener(){
 
 							@Override
@@ -98,7 +98,7 @@ import burp.*;
 									if(e.getAddress()!= null && !e.getAddress().equals(""))
 										list.ADDRESS = e.getAddress().split("\\.");
 									list.setPort(e.getPort());
-									
+
 									ListThread = new Thread(list);
 									ListThread.start();
 							        mCallbacks.issueAlert("DNSMiTM: DNS Server Started.");
@@ -108,13 +108,13 @@ import burp.*;
 									mCallbacks.issueAlert("DNSMiTM: DNS is Shutting Down");
 								}
 							}
-								
+
 						});
-						
 
-				        
 
-				        
+
+
+
 				        if(dnsConfig.getAutoStart()){
 				        	ListThread = new Thread(list);
 				        	ListThread.start();
@@ -122,35 +122,35 @@ import burp.*;
 						}
 						mCallbacks.customizeUiComponent(dnsConfig);
 		                mCallbacks.addSuiteTab(BurpExtender.this);
-		                
-		                
-					
-				}
-	        
-	        });
-			
-			
-	       
-	    }
-	    
 
-	  
+
+
+				}
+
+	        });
+
+
+
+	    }
+
+
+
 
 		@Override
 		public String getTabCaption() {
-			
-			return "NoPE Proxy";
+
+			return "Non-HTTP Proxy";
 		}
 
 
 
 		@Override
 		public Component getUiComponent() {
-			
+
 			return dnsConfig;
 		}
 
-		
+
 		private boolean shouldShow(){
 			if(dnsConfig.ntbm.requestViewer.getComponent().isShowing() ||
 				dnsConfig.ntbm.originalViewer.getComponent().isShowing() ||
@@ -165,7 +165,7 @@ import burp.*;
 		public List<JMenuItem> createMenuItems(IContextMenuInvocation inv) {
 			List<JMenuItem> nopes = new ArrayList<JMenuItem>();
 			if(shouldShow()){
-				JMenuItem send2repeater = new JMenuItem("Send to NoPE Repeater");
+				JMenuItem send2repeater = new JMenuItem("Send to Non-HTTP Proxy Repeater");
 				send2repeater.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
@@ -178,12 +178,12 @@ import burp.*;
 							message= dnsConfig.intbm.requestViewer.getMessage();
 						else
 							return;
-						
+
 						dnsConfig.repeater.setMessage(message, true);
-						
-						
+
+
 					}
-					
+
 				});
 				nopes.add(send2repeater);
 			}
@@ -191,10 +191,10 @@ import burp.*;
 		}
 
 
-		
+
 	}
-	
-	
-	
-	
+
+
+
+
 
