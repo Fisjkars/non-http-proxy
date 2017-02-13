@@ -1,6 +1,7 @@
 Uuid: 910b932735384faf911f5e09f394513b
 ExtensionType: 1
 Name: Non-HTTP Proxy
+RepoName: non-http-proxy
 ScreenVersion: 2.5
 SerialVersion: 1
 MinPlatformVersion: 0
