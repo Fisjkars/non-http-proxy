@@ -2,44 +2,38 @@ package josh.utils.events;
 
 import java.util.EventObject;
 
-public class PythonOutputEvent extends EventObject  {
-	
-	private String Message;
-	private String Error;
-	private String Direction;
+public class PythonOutputEvent extends EventObject {
 
-	public PythonOutputEvent(Object arg0) {
-		super(arg0);
-	}
+    private String Message;
+    private String Error;
+    private String Direction;
 
-	public String getMessage() {
-		return Message;
-	}
+    public PythonOutputEvent(Object arg0) {
+        super(arg0);
+    }
 
-	public void setMessage(String message) {
-		Message = message;
-	}
+    public String getMessage() {
+        return Message;
+    }
 
-	public String getError() {
-		return Error;
-	}
+    public void setMessage(String message) {
+        Message = message;
+    }
 
-	public void setError(String error) {
-		Error = error;
-	}
+    public String getError() {
+        return Error;
+    }
 
-	public String getDirection() {
-		return Direction;
-	}
+    public void setError(String error) {
+        Error = error;
+    }
 
-	public void setDirection(String direction) {
-		Direction = direction;
-	}
-	
-	
+    public String getDirection() {
+        return Direction;
+    }
 
-	
-	
-	
+    public void setDirection(String direction) {
+        Direction = direction;
+    }
 
 }

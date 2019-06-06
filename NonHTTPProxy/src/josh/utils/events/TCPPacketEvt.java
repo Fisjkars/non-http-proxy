@@ -2,53 +2,51 @@ package josh.utils.events;
 
 import java.util.EventObject;
 
-public class TCPPacketEvt extends EventObject  {
-	
-	private String sip;
-	private int dport;
-	private String Service;
-	private String time;
+public class TCPPacketEvt extends EventObject {
 
-	public TCPPacketEvt(Object arg0, String sip, String Service, int dport, String time) {
-		super(arg0);
-		this.sip = sip;
-		this.Service = Service;
-		this.dport = dport;
-		this.time = time;
-	}
+    private String sip;
+    private int dport;
+    private String Service;
+    private String time;
 
-	public String getSip() {
-		return sip;
-	}
+    public TCPPacketEvt(Object arg0, String sip, String Service, int dport, String time) {
+        super(arg0);
+        this.sip = sip;
+        this.Service = Service;
+        this.dport = dport;
+        this.time = time;
+    }
 
-	public void setSip(String sip) {
-		this.sip = sip;
-	}
+    public String getSip() {
+        return sip;
+    }
 
-	public int getDport() {
-		return dport;
-	}
+    public void setSip(String sip) {
+        this.sip = sip;
+    }
 
-	public void setDport(int dport) {
-		this.dport = dport;
-	}
+    public int getDport() {
+        return dport;
+    }
 
-	public String getService() {
-		return Service;
-	}
+    public void setDport(int dport) {
+        this.dport = dport;
+    }
 
-	public void setService(String service) {
-		Service = service;
-	}
+    public String getService() {
+        return Service;
+    }
 
-	public String getTime() {
-		return time;
-	}
+    public void setService(String service) {
+        Service = service;
+    }
 
-	public void setTime(String time) {
-		this.time = time;
-	}
-	
-	
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
 }
