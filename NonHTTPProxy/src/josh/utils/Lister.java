@@ -1,13 +1,9 @@
 package josh.utils;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
 
 import org.pcap4j.core.NotOpenException;
 import org.pcap4j.core.PacketListener;
@@ -27,15 +22,9 @@ import org.pcap4j.core.PcapNetworkInterface.PromiscuousMode;
 import org.pcap4j.core.Pcaps;
 import org.pcap4j.core.BpfProgram.BpfCompileMode;
 import org.pcap4j.packet.IpV4Packet;
-import org.pcap4j.packet.Packet;
 import org.pcap4j.packet.TcpPacket;
-import org.pcap4j.util.NifSelector;
-
-import josh.utils.events.DNSEvent;
-import josh.utils.events.DNSTableEventListener;
 import josh.utils.events.TCPConnectionAttemptListener;
 import josh.utils.events.TCPPacketEvt;
-import josh.utils.events.UDPEventListener;
 import org.pcap4j.core.PcapPacket;
 
 public class Lister implements Runnable {
