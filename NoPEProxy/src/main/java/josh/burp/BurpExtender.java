@@ -15,11 +15,11 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
-import josh.dnsspoof.UDPListener;
-import josh.ui.NonHttpUI;
-import josh.ui.item.Send2Repeater;
-import josh.utils.SharedBoolean;
-import josh.utils.events.DNSEvent;
+import zjosh.dnsspoof.UDPListener;
+import zjosh.ui.NonHttpUI;
+import zjosh.ui.item.Send2Repeater;
+import zjosh.utils.SharedBoolean;
+import zjosh.utils.events.DNSEvent;
 
 /**
  * Non-HTTP Proxy main class.

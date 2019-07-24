@@ -1,14 +1,5 @@
 package josh.dao;
 
-/*
- * The author disclaims copyright to this source code. In place of
- * a legal notice, here is a blessing:
- * 
- * May you do good and not evil.
- * May you find forgiveness for yourself and forgive others.
- * May you share freely, never taking more than you give.
- *
- */
 import java.sql.Types;
 
 import org.hibernate.dialect.Dialect;
@@ -20,6 +11,9 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 
+/**
+ * Custom implementation for SQLite dialect.
+ */
 public class SQLiteDialect extends Dialect {
 
     public SQLiteDialect() {
@@ -42,7 +36,6 @@ public class SQLiteDialect extends Dialect {
         registerColumnType(Types.BINARY, "blob");
         registerColumnType(Types.VARBINARY, "blob");
         registerColumnType(Types.LONGVARBINARY, "blob");
-        // registerColumnType(Types.NULL, "null");
         registerColumnType(Types.BLOB, "blob");
         registerColumnType(Types.CLOB, "clob");
         registerColumnType(Types.BOOLEAN, "boolean");
@@ -54,30 +47,37 @@ public class SQLiteDialect extends Dialect {
         registerFunction("round", new StandardSQLFunction("round"));
         registerFunction("substr", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
         registerFunction("trim", new AbstractAnsiTrimEmulationFunction() {
+            @Override
             protected SQLFunction resolveBothSpaceTrimFunction() {
                 return new SQLFunctionTemplate(StandardBasicTypes.STRING, "trim(?1)");
             }
 
+            @Override
             protected SQLFunction resolveBothSpaceTrimFromFunction() {
                 return new SQLFunctionTemplate(StandardBasicTypes.STRING, "trim(?2)");
             }
 
+            @Override
             protected SQLFunction resolveLeadingSpaceTrimFunction() {
                 return new SQLFunctionTemplate(StandardBasicTypes.STRING, "ltrim(?1)");
             }
 
+            @Override
             protected SQLFunction resolveTrailingSpaceTrimFunction() {
                 return new SQLFunctionTemplate(StandardBasicTypes.STRING, "rtrim(?1)");
             }
 
+            @Override
             protected SQLFunction resolveBothTrimFunction() {
                 return new SQLFunctionTemplate(StandardBasicTypes.STRING, "trim(?1, ?2)");
             }
 
+            @Override
             protected SQLFunction resolveLeadingTrimFunction() {
                 return new SQLFunctionTemplate(StandardBasicTypes.STRING, "ltrim(?1, ?2)");
             }
 
+            @Override
             protected SQLFunction resolveTrailingTrimFunction() {
                 return new SQLFunctionTemplate(StandardBasicTypes.STRING, "rtrim(?1, ?2)");
             }
@@ -88,41 +88,16 @@ public class SQLiteDialect extends Dialect {
         return true;
     }
 
-    /*
-  public boolean supportsInsertSelectIdentity() {
-    return true; // As specify in NHibernate dialect
-  }
-     */
     public boolean hasDataTypeInIdentityColumn() {
         return false; // As specify in NHibernate dialect
     }
 
-    /*
-  public String appendIdentitySelectToInsert(String insertString) {
-    return new StringBuffer(insertString.length()+30). // As specify in NHibernate dialect
-      append(insertString).
-      append("; ").append(getIdentitySelectString()).
-      toString();
-  }
-     */
     public String getIdentityColumnString() {
-        // return "integer primary key autoincrement";
         return "integer";
     }
 
     public String getIdentitySelectString() {
         return "select last_insert_rowid()";
-    }
-
-    public boolean supportsLimit() {
-        return true;
-    }
-
-    protected String getLimitString(String query, boolean hasOffset) {
-        return new StringBuffer(query.length() + 20).
-                append(query).
-                append(hasOffset ? " limit ? offset ?" : " limit ?").
-                toString();
     }
 
     public boolean supportsTemporaryTables() {
@@ -137,60 +112,85 @@ public class SQLiteDialect extends Dialect {
         return false;
     }
 
+    @Override
+    public boolean supportsLimit() {
+        return true;
+    }
+
+    @Override
+    protected String getLimitString(String query, boolean hasOffset) {
+        return new StringBuffer(query.length() + 20).
+                append(query).
+                append(hasOffset ? " limit ? offset ?" : " limit ?").
+                toString();
+    }
+
+    @Override
     public boolean supportsCurrentTimestampSelection() {
         return true;
     }
 
+    @Override
     public boolean isCurrentTimestampSelectStringCallable() {
         return false;
     }
 
+    @Override
     public String getCurrentTimestampSelectString() {
         return "select current_timestamp";
     }
 
+    @Override
     public boolean supportsUnionAll() {
         return true;
     }
 
+    @Override
     public boolean hasAlterTable() {
         return false; // As specify in NHibernate dialect
     }
 
+    @Override
     public boolean dropConstraints() {
         return false;
     }
 
+    @Override
     public String getAddColumnString() {
         return "add column";
     }
 
+    @Override
     public String getForUpdateString() {
         return "";
     }
 
+    @Override
     public boolean supportsOuterJoinForUpdate() {
         return false;
     }
 
+    @Override
     public String getDropForeignKeyString() {
         throw new UnsupportedOperationException("No drop foreign key syntax supported by SQLiteDialect");
     }
 
-    public String getAddForeignKeyConstraintString(String constraintName,
-            String[] foreignKey, String referencedTable, String[] primaryKey,
-            boolean referencesPrimaryKey) {
+    @Override
+    public String getAddForeignKeyConstraintString(String constraintName, String[] foreignKey, String referencedTable, String[] primaryKey, boolean referencesPrimaryKey) {
         throw new UnsupportedOperationException("No add foreign key syntax supported by SQLiteDialect");
     }
 
+    @Override
     public String getAddPrimaryKeyConstraintString(String constraintName) {
         throw new UnsupportedOperationException("No add primary key syntax supported by SQLiteDialect");
     }
 
+    @Override
     public boolean supportsIfExistsBeforeTableName() {
         return true;
     }
 
+    @Override
     public boolean supportsCascadeDelete() {
         return false;
     }
