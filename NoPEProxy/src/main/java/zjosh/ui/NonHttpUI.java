@@ -70,7 +70,7 @@ import org.json.simple.parser.ParseException;
 
 import josh.dao.SessionFactorySingleton;
 import josh.dao.entity.ListenerSettingEntity;
-import zjosh.service.UpdateDBTask;
+import josh.service.timer.DatabaseUpdateTask;
 import zjosh.nonHttp.GenericMiTMServer;
 import zjosh.nonHttp.PythonMangler;
 import zjosh.nonHttp.events.ProxyEvent;
@@ -2205,7 +2205,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
 
         //Set DataUpdate Timer
         timer = new Timer();
-        timer.scheduleAtFixedRate(new UpdateDBTask(queue, ntbm, searchDb, BurpTabs), 0, 1 * 1500);
+        timer.scheduleAtFixedRate(new DatabaseUpdateTask(queue, ntbm, searchDb, BurpTabs), 0, 1 * 1500);
 
         //timer.schedule(new UpdateDBTask(queue,ntbm), 2 * 1000);
     }
