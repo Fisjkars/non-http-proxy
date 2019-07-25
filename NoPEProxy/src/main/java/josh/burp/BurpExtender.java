@@ -15,7 +15,7 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
-import zjosh.dnsspoof.UDPListener;
+import josh.service.udp.UDPListener;
 import zjosh.ui.NonHttpUI;
 import zjosh.ui.item.Send2Repeater;
 import zjosh.utils.SharedBoolean;
@@ -56,8 +56,7 @@ public class BurpExtender implements IBurpExtender, ITab, IContextMenuFactory {
             }
 
             System.out.println("Setting up the UDP listener...");
-            listener = new UDPListener(Integer.parseInt(ui.getTxtDNSPort().getText()), sb);
-            listener.Callbacks = mCallbacks;
+            listener = new UDPListener(Integer.parseInt(ui.getTxtDNSPort().getText()), sb, mCallbacks);
 
             listener.addEventListener((DNSEvent e) -> {
                 mCallbacks.issueAlert("DNSMiTM: DNS Server Stopped.");
@@ -79,7 +78,7 @@ public class BurpExtender implements IBurpExtender, ITab, IContextMenuFactory {
                     mCallbacks.issueAlert("DNSMiTM: DNS Server Started.");
                 } else {
                     thread.interrupt();
-                    listener.StopServer();
+                    listener.stop();
                     mCallbacks.issueAlert("DNSMiTM: DNS is Shutting Down");
                 }
             });
