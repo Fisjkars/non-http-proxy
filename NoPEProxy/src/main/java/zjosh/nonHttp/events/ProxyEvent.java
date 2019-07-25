@@ -2,7 +2,7 @@ package zjosh.nonHttp.events;
 
 import java.util.EventObject;
 
-import zjosh.nonHttp.GenericMiTMServer;
+import josh.service.mitm.GenericMiTMServer;
 import zjosh.nonHttp.GenericUDPMiTMServer;
 
 @SuppressWarnings("serial")

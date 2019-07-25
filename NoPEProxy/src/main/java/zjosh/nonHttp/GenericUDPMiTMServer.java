@@ -127,14 +127,14 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
         ProxyEvent event = e;
         Iterator i = _listeners.iterator();
         while (i.hasNext()) {
-            ((ProxyEventListener) i.next()).DataReceived(event);
+            ((ProxyEventListener) i.next()).dataReceived(event);
         }
     }
 
     public synchronized void SendPyOutput(PythonOutputEvent event) {
         Iterator i = _pylisteners.iterator();
         while (i.hasNext()) {
-            ((PythonOutputEventListener) i.next()).PythonMessages(event);
+            ((PythonOutputEventListener) i.next()).pythonMessages(event);
         }
     }
 
@@ -143,7 +143,7 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
         event.setMtm(this);
         Iterator i = _listeners.iterator();
         while (i.hasNext()) {
-            ((ProxyEventListener) i.next()).Intercepted(event, isC2S);
+            ((ProxyEventListener) i.next()).intercepted(event, isC2S);
         }
 
     }
@@ -376,19 +376,19 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
     }
 
     @Override
-    public void DataReceived(ProxyEvent e) {
+    public void dataReceived(ProxyEvent e) {
         NewDataEvent(e);
 
     }
 
     @Override
-    public void Intercepted(ProxyEvent e, boolean isC2S) {
+    public void intercepted(ProxyEvent e, boolean isC2S) {
         InterceptedEvent(e, isC2S);
 
     }
 
     @Override
-    public void PythonMessages(PythonOutputEvent e) {
+    public void pythonMessages(PythonOutputEvent e) {
         SendPyOutput(e);
 
     }
@@ -414,7 +414,7 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
     }
 
     @Override
-    public void Closed(SendClosedEvent e) {
+    public void closed(SendClosedEvent e) {
         SendUDPData tmp = (SendUDPData) e.getSource();
         if (pairs.containsKey(tmp)) {
             pairs.get(tmp).killme = true;

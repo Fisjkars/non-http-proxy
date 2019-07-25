@@ -71,7 +71,7 @@ import org.json.simple.parser.ParseException;
 import josh.dao.SessionFactorySingleton;
 import josh.dao.entity.ListenerSettingEntity;
 import josh.service.timer.DatabaseUpdateTask;
-import zjosh.nonHttp.GenericMiTMServer;
+import josh.service.mitm.GenericMiTMServer;
 import zjosh.nonHttp.PythonMangler;
 import zjosh.nonHttp.events.ProxyEvent;
 import zjosh.nonHttp.events.ProxyEventListener;
@@ -548,11 +548,11 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
                             GenericMiTMServer mtm = new GenericMiTMServer((Boolean) tbm.getValueAt(rowid, 5), Callbacks);
                             //GenericUDPMiTMServer mtm = new GenericUDPMiTMServer((Boolean)tbm.getValueAt(rowid, 5), Callbacks);
                             //TODO: Add validation
-                            mtm.ListenPort = listport;
-                            mtm.ServerPort = Integer.parseInt("" + tbm.getValueAt(rowid, 3));
-                            mtm.CertHostName = (String) tbm.getValueAt(rowid, 4);
-                            mtm.ServerAddress = (String) tbm.getValueAt(rowid, 2);
-                            mtm.setPythonMange(chckbxEnablePythonMangler.isSelected());
+                            mtm.setListenPort(listport);
+                            mtm.setServerPort(Integer.parseInt("" + tbm.getValueAt(rowid, 3)));
+                            mtm.setCertHostName((String) tbm.getValueAt(rowid, 4));
+                            mtm.setServerAddress((String) tbm.getValueAt(rowid, 2));
+                            mtm.setMangleWithPython(chckbxEnablePythonMangler.isSelected());
                             mtm.addEventListener(NonHttpUI.this);
                             mtm.addPyEventListener(NonHttpUI.this);
                             if (btnIntercept.getText().endsWith("ON")) {
@@ -571,7 +571,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
                             threads.put(listport, mtm); /// track threads by the rowid
                             Thread t = new Thread(mtm);
                             t.start();
-                            currentListeners.addItem(listport + " - " + mtm.ServerAddress + ":" + mtm.ServerPort);
+                            currentListeners.addItem(listport + " - " + mtm.getServerAddress() + ":" + mtm.getServerPort());
 
                         }
                     } else if (e.getColumn() == 0) { //delete a server thread
@@ -580,9 +580,9 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
                         //GenericUDPMiTMServer mtm = ((GenericUDPMiTMServer)threads.get(lPort));
                         //GenericMiTMServer mtm = ((GenericMiTMServer)threads.get(rowid));
                         if (mtm != null) {
-                            mtm.KillThreads();
+                            mtm.killThreads();
                             threads.remove(lPort);
-                            currentListeners.removeItem(mtm.ListenPort + " - " + mtm.ServerAddress + ":" + mtm.ServerPort);
+                            currentListeners.removeItem(mtm.getListenPort() + " - " + mtm.getServerAddress() + ":" + mtm.getServerPort());
                         }
                     }
                 } else if (e.getType() == e.UPDATE && e.getColumn() == 5) {
@@ -1506,7 +1506,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
         chckbxEnablePythonMangler.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 for (GenericMiTMServer svr : threads.values()) {
-                    svr.setPythonMange(chckbxEnablePythonMangler.isSelected());
+                    svr.setMangleWithPython(chckbxEnablePythonMangler.isSelected());
                 }
                 /*for(GenericUDPMiTMServer svr : threads.values()){
 					svr.setPythonMange(chckbxEnablePythonMangler.isSelected());
@@ -1838,13 +1838,13 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
                     tbm.fireTableDataChanged();
 
                     //Init the session factory
-                    try{
+                    try {
                         SessionFactorySingleton.getSessionFactory();
-                    } catch (HibernateException ex){
+                    } catch (HibernateException ex) {
                         System.err.println("Initial SessionFactory creation failed." + ex);
                         throw new ExceptionInInitializerError(ex);
                     }
-                    
+
                     LinkedList<LogEntry> list = LogEntry.restoreDB();
                     for (LogEntry le : list) {
                         ntbm.log.add(le);
@@ -1893,7 +1893,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
                     GenericMiTMServer mtm = ((GenericMiTMServer) threads.get(lPort));
                     //GenericUDPMiTMServer mtm = ((GenericUDPMiTMServer)threads.get(lPort));
                     if (mtm != null) {
-                        mtm.KillThreads();
+                        mtm.killThreads();
                         threads.remove(lPort);
                     }
                     tbm.removeRow(rowid);
@@ -2580,7 +2580,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
     }
 
     @Override
-    public void DataReceived(ProxyEvent evt) {
+    public void dataReceived(ProxyEvent evt) {
         // Network data to the queue.
         // timer will process this every 2 seconds and add them to the log.
         queue.add(new LogEntry(evt.getData(), evt.getOriginalData(), evt.getSrcIP(), evt.getSrcPort(), evt.getDstIP(), evt.getDstPort(), evt.getDirection()));
@@ -2588,7 +2588,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
     }
 
     @Override
-    public void Intercepted(ProxyEvent evt, boolean isC2S) {
+    public void intercepted(ProxyEvent evt, boolean isC2S) {
 
         BurpTabs.setSelectedIndex(0);
         byte[] origReq = evt.getData();
@@ -2707,7 +2707,7 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
     }
 
     @Override
-    public void PythonMessages(PythonOutputEvent e) {
+    public void pythonMessages(PythonOutputEvent e) {
 
         String Output = "";
         if (e.getDirection().startsWith("Client")) {

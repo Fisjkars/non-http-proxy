@@ -1,5 +1,6 @@
 package zjosh.nonHttp;
 
+import josh.service.mitm.GenericMiTMServer;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -91,7 +92,7 @@ public class SendData implements Runnable {
         event.setDirection(this.Name);
         Iterator i = _sclisteners.iterator();
         while (i.hasNext()) {
-            ((SendClosedEventListener) i.next()).Closed(event);
+            ((SendClosedEventListener) i.next()).closed(event);
         }
 
     }
@@ -110,7 +111,7 @@ public class SendData implements Runnable {
             }
             Iterator i = _pylisteners.iterator();
             while (i.hasNext()) {
-                ((PythonOutputEventListener) i.next()).PythonMessages(event);
+                ((PythonOutputEventListener) i.next()).pythonMessages(event);
             }
         }
     }
@@ -128,15 +129,15 @@ public class SendData implements Runnable {
                 event.setSrcIP(this.getHostandIP(this.sock, false));//((Socket)this.sock).getInetAddress().getHostAddress());
                 event.setSrcPort(((Socket) this.sock).getPort());
             }
-            if (SERVER.ServerHostandIP != null && !SERVER.ServerHostandIP.trim().equals("")) {
-                event.setDstIP(SERVER.ServerHostandIP);
+            if (SERVER.getServerHostandIP() != null && !SERVER.getServerHostandIP().trim().equals("")) {
+                event.setDstIP(SERVER.getServerHostandIP());
             } else {
-                event.setDstIP(SERVER.ServerAddress);
+                event.setDstIP(SERVER.getServerAddress());
             }
-            event.setDstPort(SERVER.ServerPort);
+            event.setDstPort(SERVER.getServerPort());
         } else {
-            event.setDstIP(SERVER.connectionSocket.getInetAddress().getHostAddress());
-            event.setDstPort(SERVER.connectionSocket.getPort());
+            event.setDstIP(SERVER.getConnectionSocket().getInetAddress().getHostAddress());
+            event.setDstPort(SERVER.getConnectionSocket().getPort());
             if (isSSL) {
                 event.setSrcIP(this.getHostandIP(this.sock, true));//((SSLSocket)this.sock).getInetAddress().getHostAddress());
                 event.setSrcPort(((SSLSocket) this.sock).getPort());
@@ -148,7 +149,7 @@ public class SendData implements Runnable {
         }
         Iterator i = _listeners.iterator();
         while (i.hasNext()) {
-            ((ProxyEventListener) i.next()).DataReceived(event);
+            ((ProxyEventListener) i.next()).dataReceived(event);
         }
     }
 
@@ -164,11 +165,11 @@ public class SendData implements Runnable {
                 event.setSrcIP(this.getHostandIP(this.sock, false));//((Socket)this.sock).getInetAddress().getHostAddress());
                 event.setSrcPort(((Socket) this.sock).getPort());
             }
-            event.setDstIP(SERVER.ServerAddress);
-            event.setDstPort(SERVER.ServerPort);
+            event.setDstIP(SERVER.getServerAddress());
+            event.setDstPort(SERVER.getServerPort());
         } else {
-            event.setDstIP(SERVER.connectionSocket.getInetAddress().getHostAddress());
-            event.setDstPort(SERVER.connectionSocket.getPort());
+            event.setDstIP(SERVER.getConnectionSocket().getInetAddress().getHostAddress());
+            event.setDstPort(SERVER.getConnectionSocket().getPort());
 
             if (isSSL) {
                 event.setSrcIP(this.getHostandIP(this.sock, true));//((SSLSocket)this.sock).getInetAddress().getHostAddress());
@@ -180,7 +181,7 @@ public class SendData implements Runnable {
         }
         Iterator i = _listeners.iterator();
         while (i.hasNext()) {
-            ((ProxyEventListener) i.next()).Intercepted(event, isC2S);
+            ((ProxyEventListener) i.next()).intercepted(event, isC2S);
         }
     }
 
@@ -251,7 +252,7 @@ public class SendData implements Runnable {
                 byte[] original = tmp;
 
                 // Check if we have enabled python modifications to the stream
-                if (SERVER.isPythonOn()) {
+                if (SERVER.isMangleWithPython()) {
                     pm = new PythonMangler();
                     tmp = pm.mangle(tmp, isC2S);
                     SendPyOutput(pm);
@@ -310,11 +311,11 @@ public class SendData implements Runnable {
 
                 // Send things to the interceptor if it is enabled
                 if (SERVER.isInterceptOn()) {
-                    if (SERVER.getIntercetpDir() == SERVER.INTERCEPT_BOTH
-                            || (this.Name.equals("c2s") && SERVER.getIntercetpDir() == SERVER.INTERCEPT_C2S)
-                            || (this.Name.equals("s2c") && SERVER.getIntercetpDir() == SERVER.INTERCEPT_S2C)) {
+                    if (SERVER.getIntercetpDir() == GenericMiTMServer.INTERCEPT_BOTH
+                            || (this.Name.equals("c2s") && SERVER.getIntercetpDir() == GenericMiTMServer.INTERCEPT_C2S)
+                            || (this.Name.equals("s2c") && SERVER.getIntercetpDir() == GenericMiTMServer.INTERCEPT_S2C)) {
                         // Here we format the data before sending it to the interceptor
-                        if (SERVER.isPythonOn()) {
+                        if (SERVER.isMangleWithPython()) {
                             tmp = pm.preIntercept(tmp, isC2S);
                             SendPyOutput(pm);
                         }
@@ -328,13 +329,13 @@ public class SendData implements Runnable {
                         Send2Interceptor(tmp, this.Name, isC2S);
 
                         if (isC2S) {
-                            tmp = SERVER.interceptc2s.getData();
+                            tmp = SERVER.getInterceptc2s().getData();
                         } else {
-                            tmp = SERVER.intercepts2c.getData();
+                            tmp = SERVER.getInterceptc2s().getData();
                         }
 
                         // Here we format the data back before sending it back
-                        if (SERVER.isPythonOn()) {
+                        if (SERVER.isMangleWithPython()) {
                             tmp = pm.postIntercept(tmp, isC2S);
                             SendPyOutput(pm);
                         }
@@ -394,7 +395,7 @@ public class SendData implements Runnable {
         String annotation = "";
         byte[] original = repeater;
         try {
-            if (SERVER.isPythonOn()) {
+            if (SERVER.isMangleWithPython()) {
                 pm = new PythonMangler();
                 repeater = pm.mangle(repeater, isC2S);
                 SendPyOutput(pm);

@@ -84,7 +84,7 @@ public class SendUDPData implements Runnable {
         event.setDirection(this.Name);
         Iterator i = _sclisteners.iterator();
         while (i.hasNext()) {
-            ((SendClosedEventListener) i.next()).Closed(event);
+            ((SendClosedEventListener) i.next()).closed(event);
         }
 
     }
@@ -103,7 +103,7 @@ public class SendUDPData implements Runnable {
             }
             Iterator i = _pylisteners.iterator();
             while (i.hasNext()) {
-                ((PythonOutputEventListener) i.next()).PythonMessages(event);
+                ((PythonOutputEventListener) i.next()).pythonMessages(event);
             }
         }
     }
@@ -141,7 +141,7 @@ public class SendUDPData implements Runnable {
         }
         Iterator i = _listeners.iterator();
         while (i.hasNext()) {
-            ((ProxyEventListener) i.next()).DataReceived(event);
+            ((ProxyEventListener) i.next()).dataReceived(event);
         }
     }
 
@@ -173,7 +173,7 @@ public class SendUDPData implements Runnable {
         }
         Iterator i = _listeners.iterator();
         while (i.hasNext()) {
-            ((ProxyEventListener) i.next()).Intercepted(event, isC2S);
+            ((ProxyEventListener) i.next()).intercepted(event, isC2S);
         }
     }
 
