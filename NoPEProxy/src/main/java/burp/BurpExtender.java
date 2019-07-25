@@ -1,11 +1,4 @@
-package josh.burp;
-
-import burp.IBurpExtender;
-import burp.IBurpExtenderCallbacks;
-import burp.IContextMenuFactory;
-import burp.IContextMenuInvocation;
-import burp.IExtensionHelpers;
-import burp.ITab;
+package burp;
 
 import java.awt.Component;
 import java.util.ArrayList;

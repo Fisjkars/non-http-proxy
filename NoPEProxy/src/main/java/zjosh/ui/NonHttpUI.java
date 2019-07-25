@@ -70,9 +70,9 @@ import org.json.simple.parser.ParseException;
 
 import josh.dao.SessionFactorySingleton;
 import josh.dao.entity.ListenerSettingEntity;
-import josh.service.timer.DatabaseUpdateTask;
+import josh.service.scheduledtask.DatabaseUpdateTask;
 import josh.service.mitm.GenericMiTMServer;
-import zjosh.nonHttp.PythonMangler;
+import josh.service.utils.python.PythonMangler;
 import zjosh.nonHttp.events.ProxyEvent;
 import zjosh.nonHttp.events.ProxyEventListener;
 import zjosh.ui.utils.ListenerDB;
@@ -194,7 +194,6 @@ public class NonHttpUI extends JPanel implements ProxyEventListener, DNSTableEve
     private Color NopeGrey = new Color(0x26, 0x32, 0x38);
     private Lister lister;
 
-    //GenericMiTMServer mtm;
     /**
      * Create the frame.
      */

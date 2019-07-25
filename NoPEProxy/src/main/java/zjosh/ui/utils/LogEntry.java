@@ -98,7 +98,7 @@ public class LogEntry {
 
         Session s = SessionFactorySingleton.getSessionFactory().openSession();
         s.getTransaction().begin();
-        s.createQuery("delete from Requests").executeUpdate();
+        s.createQuery("delete from RequestEntity").executeUpdate();
         //reset index
         s.createSQLQuery("update hibernate_sequence set next_val = 1").executeUpdate();
         s.getTransaction().commit();
@@ -127,7 +127,7 @@ public class LogEntry {
         //HibHelper.getSessionFactory().openSession();
 
         Session s = SessionFactorySingleton.getSessionFactory().openSession();
-        List<RequestEntity> r = (List<RequestEntity>) s.createQuery("from Requests order by id desc").list();
+        List<RequestEntity> r = (List<RequestEntity>) s.createQuery("from RequestEntity order by id desc").list();
         LinkedList<LogEntry> list = new LinkedList<LogEntry>();
         for (RequestEntity q : r) {
             list.add(new LogEntry((long) q.getId(), q.getSrcIp(), q.getSrcPort(), q.getDstIp(), q.getDstPort(), q.getDirection(), q.getDate(), q.getBytes()));
@@ -143,7 +143,7 @@ public class LogEntry {
 
         Session s = SessionFactorySingleton.getSessionFactory().openSession();
         List<RequestEntity> r = (List<RequestEntity>) s
-                .createQuery("from Requests where original_str like :term or data_str like :term2 order by id desc")
+                .createQuery("from RequestEntity where original_str like :term or data_str like :term2 order by id desc")
                 .setParameter("term", "%" + query + "%")
                 .setParameter("term2", "%" + query + "%")
                 .list();

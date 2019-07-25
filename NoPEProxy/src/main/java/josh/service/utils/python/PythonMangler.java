@@ -1,4 +1,4 @@
-package zjosh.nonHttp;
+package josh.service.utils.python;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,28 +9,66 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.python.core.PyBoolean;
 import org.python.core.PyByteArray;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
-
 public class PythonMangler {
 
     private String pyCode;
     private PythonInterpreter interpreter;
-    private List _listeners = new ArrayList();
-    private ByteArrayOutputStream out = new ByteArrayOutputStream();
-    private ByteArrayOutputStream err = new ByteArrayOutputStream();
+    private ByteArrayOutputStream out;
+    private ByteArrayOutputStream err;
+
+    public PythonMangler() {
+        this.out = new ByteArrayOutputStream();
+        this.err = new ByteArrayOutputStream();
+        this.interpreter = new PythonInterpreter();
+        interpreter.setOut(out);
+        interpreter.setErr(err);
+
+        String path = System.getProperty("user.home");
+        String file = path + "/.NoPEProxy/mangler.py";
+
+        File f = new File(file);
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+            }
+        }
+        Path p = Paths.get(file);
+
+        pyCode = "";
+        try {
+            BufferedReader reader = Files.newBufferedReader(p);
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                pyCode += line + "\r\n";
+            }
+            if (pyCode.trim().equals("")) {
+                pyCode = "def mangle(input, isC2S):\r\n";
+                pyCode += "\treturn input";
+                p = Paths.get(file);
+                Charset charset = Charset.forName("UTF-8");
+                try (BufferedWriter writer = Files.newBufferedWriter(p, charset)) {
+                    writer.write(pyCode);
+                } catch (Exception ex) {
+                }
+            }
+        } catch (IOException e) {
+            pyCode = "";
+        }
+    }
 
     public String getError() {
-        String out = err.toString();
+        String error = err.toString();
         err = new ByteArrayOutputStream();
-        return out;
+        return error;
     }
 
     public String getOutput() {
@@ -40,14 +78,14 @@ public class PythonMangler {
     }
 
     public static HashMap<String, Object> runRepeaterCode(String code) {
-        HashMap<String, Object> outputs = new HashMap<String, Object>();
+        HashMap<String, Object> outputs = new HashMap<>();
         PythonInterpreter interpreter = new PythonInterpreter();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayOutputStream err = new ByteArrayOutputStream();
         interpreter.setOut(out);
         interpreter.setErr(err);
         String JavaError = "";
-        byte[] output = new byte[0];
+        byte[] output;
         try {
             interpreter.exec(code);
             PyObject someFunc = interpreter.get("sendPayload");
@@ -63,7 +101,6 @@ public class PythonMangler {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
             JavaError = ex.getLocalizedMessage();
             output = null;
         }
@@ -72,69 +109,6 @@ public class PythonMangler {
         outputs.put("stdout", out.toString());
         outputs.put("stderr", JavaError + "\n\n" + err.toString());
         return outputs;
-
-    }
-
-    public PythonMangler() {
-
-        //String fs =  System.getProperty("file.separator");
-        //String file = System.getProperty("user.dir") + fs  +"mangler.py";
-        String path = System.getProperty("user.home");
-        String file = path + "/.NoPEProxy/mangler.py";
-        /*Properties props = new Properties();
-			System.out.println(System.getProperty("python.path"));
-			props.setProperty("python.path", System.getProperty("user.dir"));
-			PythonInterpreter.initialize(System.getProperties(), props,
-                    new String[] {""});*/
-
-        this.interpreter = new PythonInterpreter();
-        //TODO: Add output steam to this so that we can log errors to the console. 
-        interpreter.setOut(out);
-        interpreter.setErr(err);
-
-        File f = new File(file);
-        if (!f.exists()) {
-            try {
-                f.createNewFile();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        }
-        Path p = Paths.get(file);
-
-        BufferedReader reader;
-        /*pyCode="import sys\r\nsys.path.append('" + System.getProperty("user.dir") + "')\r\n"
-					+ "libs=['C:\\Python27\\Lib\\site-packages', 'C:\\Python27\\Lib\\site-packages\\pypcap-1.1.5-py2.7-win32.egg', 'C:\\WINDOWS\\SYSTEM32\\python27.zip', 'C:\\Python27\\DLLs', 'C:\\Python27\\Lib', 'C:\\Python27\\Lib\\plat-win', 'C:\\Python27\\Lib\\lib-tk', 'C:\\Python27']\r\n"
-					+ "for lib in libs:\r\n"
-					+ "   sys.path.append(lib)\r\n\r\n"
-					+ "print sys.path\r\n";*/
-        pyCode = "";
-
-        try {
-            reader = Files.newBufferedReader(p);
-
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                pyCode += line + "\r\n";
-            }
-            if (pyCode.trim().equals("")) {
-                pyCode = "def mangle(input, isC2S):\r\n";
-                pyCode += "\treturn input";
-                p = Paths.get(file);
-                Charset charset = Charset.forName("UTF-8");
-                try (BufferedWriter writer = Files.newBufferedWriter(p, charset)) {
-                    writer.write(pyCode);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            pyCode = "";
-            e.printStackTrace();
-        }
-
     }
 
     public String getPyCode() {
@@ -142,11 +116,8 @@ public class PythonMangler {
     }
 
     public String setPyCode(String code) {
-        ////String fs =  System.getProperty("file.separator");
-        //String file = System.getProperty("user.dir") + fs + "mangler.py";
         String path = System.getProperty("user.home");
         String file = path + "/.NoPEProxy/mangler.py";
-        File f = new File(file);
         this.pyCode = code;
         if (pyCode.trim().equals("")) {
             pyCode = "def mangle(input, isC2S):\n";
@@ -157,19 +128,14 @@ public class PythonMangler {
         try (BufferedWriter writer = Files.newBufferedWriter(p, charset)) {
             writer.write(pyCode.replaceAll("\r", ""));
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
         return this.pyCode;
-
     }
 
     public byte[] preIntercept(byte[] input, boolean isC2S) {
-
         byte[] original = input;
         try {
             PyObject someFunc = interpreter.get("preIntercept");
-
-            //this means that the pre Intercept feature has not been implemented.
             if (someFunc == null) {
                 return input;
             }
@@ -183,7 +149,6 @@ public class PythonMangler {
 
             return out;
         } catch (Exception ex) {
-            ex.printStackTrace();
             return original;
         }
     }
@@ -206,7 +171,6 @@ public class PythonMangler {
             }
             return out;
         } catch (Exception ex) {
-            ex.printStackTrace();
             return original;
         }
 
@@ -231,7 +195,6 @@ public class PythonMangler {
 
             return out;
         } catch (Exception ex) {
-            ex.printStackTrace();
             return original;
         }
     }
