@@ -31,7 +31,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
-import zjosh.nonHttp.DynamicKeyStore;
+import josh.service.mitm.security.DynamicKeyStore;
 import zjosh.nonHttp.SendData;
 import zjosh.nonHttp.events.ProxyEvent;
 import zjosh.nonHttp.events.ProxyEventListener;

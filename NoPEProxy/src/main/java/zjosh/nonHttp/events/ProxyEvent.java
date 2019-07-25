@@ -3,7 +3,7 @@ package zjosh.nonHttp.events;
 import java.util.EventObject;
 
 import josh.service.mitm.GenericMiTMServer;
-import zjosh.nonHttp.GenericUDPMiTMServer;
+import josh.service.mitm.GenericUDPMiTMServer;
 
 @SuppressWarnings("serial")
 public class ProxyEvent extends EventObject {

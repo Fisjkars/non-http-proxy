@@ -1,5 +1,6 @@
 package zjosh.nonHttp;
 
+import josh.service.mitm.GenericUDPMiTMServer;
 import josh.service.mitm.GenericMiTMServer;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

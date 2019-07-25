@@ -5,25 +5,19 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import org.python.core.PyBoolean;
 import org.python.core.PyByteArray;
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
-import zjosh.nonHttp.events.ProxyEventListener;
-import zjosh.utils.events.PythonOutputEvent;
-import zjosh.utils.events.PythonOutputEventListener;
 
 public class PythonMangler {
 
@@ -241,13 +235,4 @@ public class PythonMangler {
             return original;
         }
     }
-
-    //Test function
-    public static void main(String[] args) {
-        PythonMangler pm = new PythonMangler();
-        byte[] out = pm.mangle("test this shit".getBytes(), true);
-        System.out.println(new String(out));
-
-    }
-
 }

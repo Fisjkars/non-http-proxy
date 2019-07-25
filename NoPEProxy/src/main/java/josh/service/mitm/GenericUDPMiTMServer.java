@@ -1,18 +1,21 @@
-package zjosh.nonHttp;
-//
+package josh.service.mitm;
+
+import burp.IBurpExtenderCallbacks;
 
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.cert.X509Certificate;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,7 +29,8 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
-import burp.IBurpExtenderCallbacks;
+import josh.service.mitm.security.DynamicKeyStore;
+import zjosh.nonHttp.SendUDPData;
 import zjosh.nonHttp.events.ProxyEvent;
 import zjosh.nonHttp.events.ProxyEventListener;
 import zjosh.ui.utils.InterceptData;
@@ -37,130 +41,127 @@ import zjosh.utils.events.SendClosedEventListener;
 
 public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, PythonOutputEventListener, SendClosedEventListener {
 
-    public int ListenPort;
-    public int ServerPort;
-    public String ServerAddress;
-    public String ServerHostandIP;
-    public String CertHostName;
-    private boolean killme = false;
-    protected boolean isInterceptOn = false;
-    private int interceptType = 0; // 0=both, 1=c2s, 2=s2c
-    public InterceptData interceptc2s;
-    public InterceptData intercepts2c;
-    Object svrSock;
-    //SSLServerSocket sslSvrSock;
-    Socket connectionSocket;
-    Object cltSock;
-    Vector<Thread> threads = new Vector<Thread>();
-    Vector<SendUDPData> sends = new Vector<SendUDPData>();
-    HashMap<SendUDPData, SendUDPData> pairs = new HashMap<SendUDPData, SendUDPData>();
-    HashMap<Integer, Thread> treads2 = new HashMap<Integer, Thread>();
-    boolean isSSL = false;
-    boolean isRunning = false;
-    public final int INTERCEPT_C2S = 1;
-    public final int INTERCEPT_S2C = 2;
-    public final int INTERCEPT_BOTH = 0;
-    private int IntercetpDirection = 0;
-    private IBurpExtenderCallbacks Callbacks;
-    private boolean MangleWithPython = false;
-    //SendData send;
-    //SendData getD;
+    public static final int INTERCEPT_BOTH = 0;
+    public static final int INTERCEPT_C2S = 1;
+    public static final int INTERCEPT_S2C = 2;
+
+    private boolean isRunning;
+    private boolean mangleWithPython;
+    private boolean isInterceptOn;
+    private int listenPort;
+    private int serverPort;
+    private int interceptDirection;
+    private String serverAddress;
+    private String serverHostandIP;
+    private String certHostName;
+    private Object svrSock;
+    private Object cltSock;
+    private Socket connectionSocket;
+
+    private final boolean isSSL;
+    private final InterceptData interceptc2s;
+    private final InterceptData intercepts2c;
+    private final List listeners;
+    private final List pylisteners;
+    private final IBurpExtenderCallbacks callbacks;
+    private final Vector<Thread> threads;
+    private final Vector<SendUDPData> sends;
+    private final HashMap<SendUDPData, SendUDPData> pairs;
 
     public GenericUDPMiTMServer(boolean isSSL, IBurpExtenderCallbacks Callbacks) {
         this.interceptc2s = new InterceptData(null);
         this.intercepts2c = new InterceptData(null);
         this.isSSL = isSSL;
-        this.Callbacks = Callbacks;
+        this.isInterceptOn = false;
+        this.isRunning = false;
+        this.mangleWithPython = false;
+        this.callbacks = Callbacks;
+        this.interceptDirection = 0;
+        this.threads = new Vector<>();
+        this.sends = new Vector<>();
+        this.pairs = new HashMap<>();
+        this.listeners = new ArrayList();
+        this.pylisteners = new ArrayList();
     }
 
     public static boolean available(int port) {
-        if (port < 1 || port > 65535) {
-            return false;
-        }
-
-        ServerSocket ss = null;
-        DatagramSocket ds = null;
-        try {
-            ss = new ServerSocket(port);
-            ss.setReuseAddress(true);
-            ds = new DatagramSocket(port);
-            ds.setReuseAddress(true);
-            return true;
-        } catch (IOException e) {
-        } finally {
-            if (ds != null) {
-                ds.close();
-            }
-
-            if (ss != null) {
-                try {
-                    ss.close();
-                } catch (IOException e) {
-
+        boolean result = false;
+        if (port >= 1 && port <= 65535) {
+            ServerSocket ss = null;
+            DatagramSocket ds = null;
+            try {
+                ss = new ServerSocket(port);
+                ss.setReuseAddress(true);
+                ds = new DatagramSocket(port);
+                ds.setReuseAddress(true);
+                result = true;
+            } catch (IOException e) {
+                //Don't really catch.
+            } finally {
+                if (ds != null) {
+                    ds.close();
+                }
+                if (ss != null) {
+                    try {
+                        ss.close();
+                    } catch (IOException e) {
+                    }
                 }
             }
         }
-
-        return false;
+        return result;
     }
 
-    private List _listeners = new ArrayList();
-    private List _pylisteners = new ArrayList();
-
     public synchronized void addEventListener(ProxyEventListener listener) {
-        _listeners.add(listener);
+        listeners.add(listener);
     }
 
     public synchronized void removeEventListener(ProxyEventListener listener) {
-        _listeners.remove(listener);
+        listeners.remove(listener);
     }
 
     public synchronized void addPyEventListener(PythonOutputEventListener listener) {
-        _pylisteners.add(listener);
+        pylisteners.add(listener);
     }
 
     public synchronized void removePyEventListener(PythonOutputEventListener listener) {
-        _pylisteners.remove(listener);
+        pylisteners.remove(listener);
     }
 
-    private synchronized void NewDataEvent(ProxyEvent e) {
+    private synchronized void newDataEvent(ProxyEvent e) {
         ProxyEvent event = e;
-        Iterator i = _listeners.iterator();
+        Iterator i = listeners.iterator();
         while (i.hasNext()) {
             ((ProxyEventListener) i.next()).dataReceived(event);
         }
     }
 
-    public synchronized void SendPyOutput(PythonOutputEvent event) {
-        Iterator i = _pylisteners.iterator();
+    public synchronized void sendPyOutput(PythonOutputEvent event) {
+        Iterator i = pylisteners.iterator();
         while (i.hasNext()) {
             ((PythonOutputEventListener) i.next()).pythonMessages(event);
         }
     }
 
-    private synchronized void InterceptedEvent(ProxyEvent e, boolean isC2S) {
+    private synchronized void interceptedEvent(ProxyEvent e, boolean isC2S) {
         ProxyEvent event = e;
         event.setMtm(this);
-        Iterator i = _listeners.iterator();
+        Iterator i = listeners.iterator();
         while (i.hasNext()) {
             ((ProxyEventListener) i.next()).intercepted(event, isC2S);
         }
-
     }
 
-    public boolean isPythonOn() {
-        return this.MangleWithPython;
+    public boolean isMangleWithPython() {
+        return this.mangleWithPython;
     }
 
-    public void setPythonMange(boolean mangle) {
-        this.MangleWithPython = mangle;
+    public void setMangleWithPython(boolean mangle) {
+        this.mangleWithPython = mangle;
     }
 
     public void KillThreads() {
-
-        //System.out.println("Number of Data buffer threads is: " + threads.size());
         for (int i = 0; i < threads.size(); i++) {
-            //System.out.println("Interrrpting Thread");
             try {
                 if (sends.get(i).isSSL()) {
                     ((SSLSocket) sends.get(i).sock).shutdownInput();
@@ -171,16 +172,11 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
                     ((Socket) sends.get(i).sock).shutdownOutput();
                     ((Socket) sends.get(i).sock).close();
                 }
-            } catch (SocketException e) {
-                // TODO Auto-generated catch block
-                //e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                //e.printStackTrace();
+
             }
             sends.get(i).killme = true;
             threads.get(i).interrupt();
-
         }
 
         try {
@@ -193,60 +189,42 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
                 ((ServerSocket) svrSock).close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
     }
 
     @Override
     public void run() {
-        Callbacks.printOutput("Starting New Server.");
+        callbacks.printOutput("Starting New Server.");
         this.isRunning = true;
-        if (this.ServerAddress == null || this.ServerPort == 0 | this.ListenPort == 0) {
-            Callbacks.printOutput("Ports and or Addresses are blank");
+        if (this.serverAddress == null || this.serverPort == 0 | this.listenPort == 0) {
+            callbacks.printOutput("Ports and or Addresses are blank");
             this.isRunning = false;
             return;
         }
         try {
             if (isSSL) {
-
-                //testBC test = new testBC();
                 DynamicKeyStore test = new DynamicKeyStore();
-
-                String ksPath = test.generateKeyStore("changeit", this.CertHostName);
-
+                String ksPath = test.generateKeyStore("changeit", this.certHostName);
                 KeyStore ks = KeyStore.getInstance("PKCS12");
                 ks.load(new FileInputStream(ksPath), "changeit".toCharArray());
-
                 KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-
                 kmf.init(ks, "changeit".toCharArray());
-
-                X509Certificate[] result = new X509Certificate[ks.getCertificateChain(ks.aliases().nextElement()).length];
-                //System.out.println(result.length);
-
                 SSLContext sc = SSLContext.getInstance("TLS");
                 sc.init(kmf.getKeyManagers(), null, null);
                 SSLServerSocketFactory ssf = sc.getServerSocketFactory();
-                svrSock = (SSLServerSocket) ssf.createServerSocket(this.ListenPort);
-
+                svrSock = (SSLServerSocket) ssf.createServerSocket(this.listenPort);
             } else {
-                svrSock = new DatagramSocket(this.ListenPort);
+                svrSock = new DatagramSocket(this.listenPort);
             }
             //svrSock = new ServerSocket(this.ListenPort);
 
-            while (true && !killme) {
+            while (true) {
                 try {
-                    Callbacks.printOutput("New MiTM Instance Created");
+                    callbacks.printOutput("New MiTM Instance Created");
                     //System.out.println("Number of Threads is: " + threads.size());
                     if (isSSL) {
                         connectionSocket = ((SSLServerSocket) svrSock).accept();
                     }
-
-                    byte[] buffer = new byte[1024];
-                    DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
                     connectionSocket.setSoTimeout(200);
                     connectionSocket.setReceiveBufferSize(2056);
@@ -259,24 +237,24 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
                     //Object cltSock;
                     if (isSSL) {
                         SSLSocketFactory ssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
-                        cltSock = (SSLSocket) ssf.createSocket(this.ServerAddress, this.ServerPort);
+                        cltSock = (SSLSocket) ssf.createSocket(this.serverAddress, this.serverPort);
                         ((SSLSocket) cltSock).setSoTimeout(200);
                         ((SSLSocket) cltSock).setReceiveBufferSize(2056);
                         ((SSLSocket) cltSock).setSendBufferSize(2056);
                         ((SSLSocket) cltSock).setKeepAlive(false);
                     } else {
-                        cltSock = new Socket(this.ServerAddress, this.ServerPort);
+                        cltSock = new Socket(this.serverAddress, this.serverPort);
                         ((Socket) cltSock).setSoTimeout(200);
                         ((Socket) cltSock).setReceiveBufferSize(2056);
                         ((Socket) cltSock).setSendBufferSize(2056);
                         ((Socket) cltSock).setKeepAlive(false);
-                        ServerHostandIP = ((Socket) cltSock).getRemoteSocketAddress().toString();
-                        if (ServerHostandIP != null && ServerHostandIP.indexOf(":") != -1) {
-                            ServerHostandIP = ServerHostandIP.split(":")[0];
+                        serverHostandIP = ((Socket) cltSock).getRemoteSocketAddress().toString();
+                        if (serverHostandIP != null && serverHostandIP.contains(":")) {
+                            serverHostandIP = serverHostandIP.split(":")[0];
                         }
 
-                        if (ServerHostandIP.indexOf('/') == 0) {
-                            ServerHostandIP = ServerHostandIP.split("/")[1];
+                        if (serverHostandIP.indexOf('/') == 0) {
+                            serverHostandIP = serverHostandIP.split("/")[1];
                         }
                     }
 
@@ -327,20 +305,19 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
                     String message = e.getMessage();
                     System.out.println(e.getMessage());
                     if (message.equals("Connection refused")) {
-                        Callbacks.printOutput("Error: Connection Refused to " + this.ServerAddress + ":" + this.ServerPort);
+                        callbacks.printOutput("Error: Connection Refused to " + this.serverAddress + ":" + this.serverPort);
                     } else {
-                        Callbacks.printOutput(e.getMessage());
+                        callbacks.printOutput(e.getMessage());
                     }
                     connectionSocket.close();
                 }
 
             }
-            connectionSocket.close();
-        } catch (Exception ex) {
-            Callbacks.printOutput(ex.getMessage());
+        } catch (IOException | KeyManagementException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException ex) {
+            callbacks.printOutput(ex.getMessage());
 
         }
-        Callbacks.printOutput("Main Thread Has Died but thats ok.");
+        callbacks.printOutput("Main Thread Has Died but thats ok.");
         isRunning = false;
 
     }
@@ -357,12 +334,12 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
         return this.isInterceptOn;
     }
 
-    public void setInterceptDir(int direction) {
-        this.IntercetpDirection = direction;
+    public void setInterceptDirection(int direction) {
+        this.interceptDirection = direction;
     }
 
-    public int getIntercetpDir() {
-        return this.IntercetpDirection;
+    public int getInterceptDirection() {
+        return this.interceptDirection;
     }
 
     public void forwardC2SRequest(byte[] bytes) {
@@ -377,39 +354,29 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
 
     @Override
     public void dataReceived(ProxyEvent e) {
-        NewDataEvent(e);
-
+        newDataEvent(e);
     }
 
     @Override
     public void intercepted(ProxyEvent e, boolean isC2S) {
-        InterceptedEvent(e, isC2S);
+        interceptedEvent(e, isC2S);
 
     }
 
     @Override
     public void pythonMessages(PythonOutputEvent e) {
-        SendPyOutput(e);
+        sendPyOutput(e);
 
     }
 
     private void KillSocks(SendUDPData sd) {
-        //System.out.println(sd.Name);
         try {
             if (sd.isSSL()) {
-                /*((SSLSocket)sd.sock).shutdownInput();
-				((SSLSocket)sd.sock).shutdownOutput();*/
                 ((SSLSocket) sd.sock).close();
             } else {
-                /*((Socket)sd.sock).shutdownInput();
-				((Socket)sd.sock).shutdownOutput();*/
                 ((Socket) sd.sock).close();
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-
         }
     }
 
@@ -431,6 +398,42 @@ public class GenericUDPMiTMServer implements Runnable, ProxyEventListener, Pytho
             }
         }
 
+    }
+
+    public int getServerPort() {
+        return serverPort;
+    }
+
+    public String getServerAddress() {
+        return serverAddress;
+    }
+
+    public String getServerHostandIP() {
+        return serverHostandIP;
+    }
+
+    public Socket getConnectionSocket() {
+        return connectionSocket;
+    }
+
+    public InterceptData getInterceptc2s() {
+        return interceptc2s;
+    }
+
+    public void setListenPort(int listenPort) {
+        this.listenPort = listenPort;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    public void setCertHostName(String certHostName) {
+        this.certHostName = certHostName;
     }
 
 }
