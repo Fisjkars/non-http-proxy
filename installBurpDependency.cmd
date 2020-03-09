@@ -1,1 +1,1 @@
-mvn install:install-file -Dfile="C:\Program Files\BurpSuitePro\burpsuite_pro.jar" -DgroupId=NonHTTPProxy.burp -DartifactId=burp -Dversion=2.1.01 -Dpackaging=jar
+mvn install:install-file -Dfile="C:\Program Files\BurpSuitePro\burpsuite_pro.jar" -DgroupId=NonHTTPProxy.burp -DartifactId=burp -Dversion=2020.2 -Dpackaging=jar

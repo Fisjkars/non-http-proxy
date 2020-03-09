@@ -13,7 +13,7 @@
 
         <!-- Define dependencies versions -->
         <activation.version>1.1.1</activation.version>
-        <burp.version>2.1.01</burp.version>
+        <burp.version>2020.2</burp.version>
         <burp-extender-api.version>1.7.22</burp-extender-api.version>
         <bcpkix-jdk15on.version>1.54</bcpkix-jdk15on.version>
         <bcprov-jdk15on.version>1.54</bcprov-jdk15on.version>
