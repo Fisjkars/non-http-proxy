@@ -272,7 +272,7 @@ public class SendUDPData implements Runnable {
 
                 // Send things to the interceptor if it is enabled
                 if (SERVER.isInterceptOn()) {
-                    if (SERVER.getInterceptDirection()== SERVER.INTERCEPT_BOTH
+                    if (SERVER.getInterceptDirection() == SERVER.INTERCEPT_BOTH
                             || (this.Name.equals("c2s") && SERVER.getInterceptDirection() == SERVER.INTERCEPT_C2S)
                             || (this.Name.equals("s2c") && SERVER.getInterceptDirection() == SERVER.INTERCEPT_S2C)) {
                         // Here we format the data before sending it to the interceptor

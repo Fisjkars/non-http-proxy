@@ -19,8 +19,8 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.InitialDirContext;
-import josh.service.udp.UDPListener;
 
+import josh.service.udp.UDPListener;
 import zjosh.utils.events.DNSTableEvent;
 import zjosh.utils.events.DNSTableEventListener;
 
