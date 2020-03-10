@@ -55,7 +55,6 @@
             <groupId>NonHTTPProxy.burp</groupId>
             <artifactId>burp</artifactId>
             <version>${burp.version}</version>
-            <scope>runtime</scope>
         </dependency>
         
         <dependency>

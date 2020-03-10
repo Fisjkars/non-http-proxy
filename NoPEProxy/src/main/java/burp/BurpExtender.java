@@ -100,7 +100,7 @@ public class BurpExtender implements IBurpExtender, ITab, IContextMenuFactory {
     }
 
     /**
-     * urp uses this method to obtain the component that should be used as the
+     * Burp uses this method to obtain the component that should be used as the
      * contents of the custom tab when it is displayed.
      *
      * @return The component that should be used as the contents of the custom
@@ -130,4 +130,12 @@ public class BurpExtender implements IBurpExtender, ITab, IContextMenuFactory {
                 ? new ArrayList<>(Arrays.asList(Send2Repeater.getItem(ui))) : new ArrayList<>();
     }
 
+    /**
+     * Method to use for debugging the project.
+     *
+     * @param args System parameters.
+     */
+    public static void main(String[] args) {
+        StartBurp.main(args);
+    }
 }
