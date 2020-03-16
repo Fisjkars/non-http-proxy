@@ -17,7 +17,7 @@
  *
  */
 
-package nope.persistance.entity;
+package nope.persistence.entity;
 
 import java.io.Serializable;
 import java.util.Base64;
@@ -94,16 +94,16 @@ public class Request implements Serializable {
    * @param srcPort Request source port.
    * @param dstPort Request destination port.
    * @param direction Request direction.
-   * @param dstIP Destination IP.
+   * @param dstIp Destination IP.
    * @param bytes Request size.
    */
-  public Request(int index, byte[] requestResponse, byte[] original, String srcIp, int srcPort, String dstIP, int dstPort, String direction, Long time, int bytes) {
+  public Request(int index, byte[] requestResponse, byte[] original, String srcIp, int srcPort, String dstIp, int dstPort, String direction, Long time, int bytes) {
     this.altId = index;
     this.data = Base64.getEncoder().encodeToString(requestResponse);
     this.original = Base64.getEncoder().encodeToString(original);
     this.srcIp = srcIp;
     this.srcPort = srcPort;
-    this.dstIp = dstIP;
+    this.dstIp = dstIp;
     this.dstPort = dstPort;
     this.direction = direction;
     this.date = time;

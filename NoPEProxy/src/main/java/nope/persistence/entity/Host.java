@@ -16,7 +16,7 @@
  *
  */
 
-package nope.persistance.entity;
+package nope.persistence.entity;
 
 import java.io.Serializable;
 
