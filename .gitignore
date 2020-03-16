@@ -3,3 +3,5 @@
 /requests.sqlite
 /.classpath
 /NoPEProxy/target/
+/NoPEProxy/nbproject/
+/NoPEProxy/nope.db
